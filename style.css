@@ -1,285 +1,164 @@
-@charset "utf-8";
-@keyframes startpagetitle {
-  0% {
-    transform: translateY(-300px);
-    opacity: 0; /* Start invisible and off-screen */
-  }
-  60% {
-    transform: translateY(25px); /* Overshoot the final position */
-    opacity: 1; /* Become visible */
-  }
-  80% {
-    transform: translateY(-10px); /* Bounce back up slightly */
-  }
-  100% {
-    transform: translateY(0); /* Settle in the final position */
-  }
-}
-@keyframes  startButtonanimation{
-  0% {
-    transform: scale(0) rotate(0deg);
-    opacity: 0; /* Start hidden and small */
-  }
-  60% {
-    transform: scale(1.2) rotate(370deg); /* Overshoot size and spin past 360 */
-    opacity: 1;
-  }
-  80% {
-    transform: scale(0.95) rotate(355deg); /* Bounce back smaller */
-  }
-  100% {
-    transform: scale(1) rotate(360deg); /* Settle at final size */
-    opacity: 1;
-  }
-}
-/* --- 1. General & Global Styles --- */
+@charset "utf--8";
 
-/* Sets up basic styles for the entire website */
+/* --- 1. KEYFRAME ANIMATIONS --- */
+
+@keyframes startpagetitle {
+  0%   { transform: translateY(-300px); opacity: 0; }
+  60%  { transform: translateY(25px); opacity: 1; }
+  80%  { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes startButtonanimation {
+  0%   { transform: scale(0) rotate(0deg); opacity: 0; }
+  60%  { transform: scale(1.2) rotate(370deg); opacity: 1; }
+  80%  { transform: scale(0.95) rotate(355deg); }
+  100% { transform: scale(1) rotate(360deg); opacity: 1; }
+}
+
+/* --- 2. GENERAL & GLOBAL STYLES --- */
+
 html, body {
   height: 100%;
   margin: 0;
+  font-family: "Rampart One", sans-serif;
 }
 
-/* --- 2. Layout Containers --- */
+/* --- 3. LAYOUT CONTAINERS --- */
 
-/* Main container that holds and centers content by default */
 .center-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Aligns items to the top by default */
   gap: 20px;
   min-height: 100vh;
   padding: 20px;
   box-sizing: border-box;
 }
 
-/* --- 3. Page-Specific Layout Overrides --- */
+/* --- 4. PAGE-SPECIFIC LAYOUTS --- */
 
-/* Special layout for the home page (title top, button bottom) */
+/* Home Page: Title at top, button more centered */
 #home-page .center-container {
   justify-content: space-between;
   padding-top: 5vh;
-  padding-bottom: 40vh;
-}
-#home-page .box {
-  padding: 25px 50px;
+  padding-bottom: 25vh; /* <-- FIX: Adjusted for better centering */
 }
 
-#home-page a.text {
-  font-size: 3.5rem;
-}
-
+/* Selection Page: Custom grid layout */
 #selection .center-container {
-  position: relative; /* Allows absolute positioning for children */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  place-items: center;
+  gap: 20px;
+  padding: 5vh 10vw;
 }
 
-/* --- 4. Component Styles (Buttons & Headers) --- */
+/* Game Menu Pages: Custom grid layout */
+#sangomon .center-container, #nigomon .center-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto 1fr auto;
+  place-items: center;
+  gap: 15px;
+  padding: 5vh 5vw;
+}
 
-/* Style for the main page titles */
+/* --- 5. COMPONENT STYLES (HEADERS & BUTTONS) --- */
+
+/* Main page titles */
 .header h1, .header2 h1 {
-  animation-name: startpagetitle;
-  animation-duration: 1s;
-  animation-timing-function: cubic-bezier(0.5, 1.2, 0.6, 1.5);
-  margin: 0; /* Removes default browser spacing */
+  animation: startpagetitle 1s ease-out forwards;
+  margin: 0;
   color: #FF9900;
   -webkit-text-stroke: 2px #C85A00;
   text-shadow: 3px 3px 0 #FFF;
   font-weight: bold;
   text-align: center;
-  font-family: "Rampart One", sans-serif;
-  font-size: clamp(24px, 8vw, 150px);
+  font-size: clamp(2.5rem, 8vw, 6rem);
   white-space: nowrap;
 }
 
+/* Shared styles for ALL buttons */
 .box, .box2 {
   opacity: 0;
   animation: startButtonanimation 1.2s ease-out 0.5s forwards;
-  transform: scale(1) rotate(360deg);
   transition: transform 0.3s ease-in-out;
-  
-  padding: 15px 30px;
+  /* FIX: Added responsive padding for all buttons */
+  padding: clamp(15px, 3vh, 25px) clamp(30px, 5vw, 50px);
   border-radius: 25px;
+  text-align: center;
 }
-/* Style for the blue buttons */
+
+/* Blue buttons */
 .box {
   background-color: #4A90E2;
   border: 5px solid #004AAD;
-  box-shadow: 
-    0 0 0 5px #004AAD,
-    -3px -3px 0 8px #000000,
-    3px 3px 0 8px #000000;
+  box-shadow: 0 0 0 5px #004AAD, -3px -3px 0 8px #000, 3px 3px 0 8px #000;
 }
 
-/* Specific colors for the red buttons */
+/* Red buttons */
 .box2 {
   background-color: #ff6464;
   border: 5px solid #ff0000;
-  box-shadow: 
-    0 0 0 5px #f44242,
-    -3px -3px 0 8px #000000,
-    3px 3px 0 8px #000000;
+  box-shadow: 0 0 0 5px #f44242, -3px -3px 0 8px #000, 3px 3px 0 8px #000;
 }
+
+/* Hover effect for ALL buttons */
 .box:hover, .box2:hover {
-  /* Add rotate(360deg) to match the resting state */
-  transform: scale(1.1) rotate(360deg);
+  transform: scale(1.1);
 }
-/* Default style for all button text */
+
+/* Default text style inside buttons */
 a.text, a.text2 {
-  
   display: inline-block;
   color: black;
-  text-decoration: none; 
-  font-family: "Rampart One", sans-serif;
-  font-size: xx-large;
+  text-decoration: none;
+  font-size: clamp(1.5rem, 4vw, 2.5rem); /* Responsive font size */
   font-weight: bold;
-  transition: all 0.5s ease-in-out;
-
+  transition: all 0.3s ease-out;
 }
 
-/* Style for button text when the mouse hovers over it */
-a.text:hover, a.text2:hover {
-  color: white; 
-  
-  text-shadow:   
-    2px 2px 0 black,
-    -2px -2px 0 black,
-    -2px 2px 0 black,
-    2px -2px 0 black;
-
-  
+/* Text style on hover */
+.box:hover a, .box2:hover a {
+  color: white;
+  text-shadow: 2px 2px 0 black, -2px -2px 0 black, -2px 2px 0 black, 2px -2px 0 black;
 }
 
-/* --- 5. Selection Page Button Positioning --- */
+/* --- 6. GRID PLACEMENT FOR GAME MENU PAGES --- */
 
-/* Positions all buttons on the selection page */
+#sangomon .header2, #nigomon .header2 { grid-column: 1 / -1; }
+#sangomon .button-mon2, #nigomon .button-mon2 { grid-column: 1; grid-row: 2; }
+#sangomon .button-tsuika, #nigomon .button-tsuika { grid-column: 2; grid-row: 2; }
+#sangomon .button-mon1, #nigomon .button-mon1 { grid-column: 3; grid-row: 2; }
+#sangomon .button-back, #nigomon .button-back { grid-column: 1; grid-row: 3; }
+#sangomon .button-start, #nigomon .button-start { grid-column: 3; grid-row: 3; }
 
-#selection .box, #selection .box2,#sangomon .box,#sangomon .box2, #nigomon .box,#nigomon .box2 {
-  padding: 25px 50px;
-  position: absolute;
-  
-}
-#selection a.text, #selection a.text2,#sangomon a.text,#sangomon a.text2,#nigomon a.text,#nigomon a.text{
-  font-size: 3.5rem; 
+/* --- 7. GRID PLACEMENT FOR SELECTION PAGE --- */
 
-}
-#selection .button-1 {
+#selection .button-1 { grid-column: 1; grid-row: 2; }
+#selection .button-2 { grid-column: 2; grid-row: 2; }
+#selection .button-3 { grid-column: 1 / -1; grid-row: 3; }
 
-  animation: startButtonanimation 1.2s ease-out /*0.5s*/ forwards;
-  
-  top: 30%;
-  left: 20%;
-  
-}
+/* --- 8. RESPONSIVE STYLES FOR MOBILE --- */
 
-/* Positions the "三語文" button */
-#selection .button-2 {
-  animation: startButtonanimation 1.2s ease-out /*0.5s*/ forwards;
-  
-  top: 30%;
-  right: 20%;
+@media (max-width: 768px) {
+  #sangomon .center-container, #nigomon .center-container, #selection .center-container {
+    display: flex;
+    justify-content: center;
+  }
 }
 
-/* Positions the "戻る" button */
-#selection .button-3 {
-  animation: startButtonanimation 1.2s ease-out /*0.5s*/forwards;
+/* --- 9. PAGE-SPECIFIC BACKGROUNDS --- */
 
-  bottom: 20%;
- 
-}
+#home-page { background-image: url('bg_school_koutei.jpg'); }
+#sangomon, #nigomon { background-image: url('bg_school_room_back.jpg'); }
+#selection { background-image: url('bg_school_taiikukan.jpg'); }
 
-#sangomon .center-container, #nigomon .center-container {
-  position: relative;
-}
-
-/* This takes all buttons on these pages out of the normal flow */
-#sangomon .box, #sangomon .box2,
-#nigomon .box, #nigomon .box2 {
-  position: absolute;
-}
-
-/* --- Now, we position each button individually --- */
-
-/* "10もん" button */
-#sangomon .button-mon1, #nigomon .button-mon1 {
-  top: 35%;
-  right: 20%;
-  transform: translateX(-50%); /* Center horizontally */
-}
-
-/* "5もん" button */
-#sangomon .button-mon2, #nigomon .button-mon2 {
-  top: 35%;
-  left: 20%;
-  transform: translateX(-50%); /* Center horizontally */
-}
-
-/* "追加" button */
-#sangomon .button-tsuika, #nigomon .button-tsuika {
- bottom: 30%;
-  transform: translateX(-50%); /* Center horizontally */
-}
-
-/* "さいしょにもどる" button */
-#sangomon .button-start, #nigomon .button-start {
-  bottom: 5%;
-  right: 5%;
-  transform: translateX(-50%);
-}
-
-/* "もどる" button */
-#sangomon .button-back, #nigomon .button-back {
-  bottom: 5%;
-  left: 5%;
-  transform: translateX(-50%);
-}
-/* --- 6. Page-Specific Backgrounds --- */
-
-/* Background for the home page */
-#home-page {
-  background-image: url('bg_school_koutei.jpg');
+#home-page, #sangomon, #nigomon, #selection {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-}
-
-/* Background for the game pages */
-#sangomon, #nigomon {
-  background-image: url('bg_school_room_back.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-}
-
-/* Background for the selection page */
-#selection {
-  background-image: url('bg_school_taiikukan.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-}
-
-/* --- 7. Utility Styles --- */
-
-/* Styles for the decorative images fixed in the corners */
-.corner-image {
-  position: fixed;
-  width: 150px;
-  height: auto;
-  z-index: 10;
-}
-
-/* Positions an image in the bottom right corner */
-.botright {
-  bottom: 0;
-  right: 0;
-}
-
-/* Positions an image in the bottom left corner */
-.botleft {
-  bottom: 0;
-  left: 0;
 }
