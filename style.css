@@ -42,7 +42,7 @@ html, body {
 #home-page .center-container {
   justify-content: space-between;
   padding-top: 5vh;
-  padding-bottom: 25vh; /* <-- FIX: Adjusted for better centering */
+  padding-bottom: 25vh;
 }
 
 /* Selection Page: Custom grid layout */
@@ -55,11 +55,12 @@ html, body {
   padding: 5vh 10vw;
 }
 
+/* --- CHANGE #1: UPDATED GRID ROWS FOR GAME MENU --- */
 /* Game Menu Pages: Custom grid layout */
 #sangomon .center-container, #nigomon .center-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto auto 1fr auto; /* Changed to 4 rows for more control */
   place-items: center;
   gap: 15px;
   padding: 5vh 5vw;
@@ -85,7 +86,6 @@ html, body {
   opacity: 0;
   animation: startButtonanimation 1.2s ease-out 0.5s forwards;
   transition: transform 0.3s ease-in-out;
-  /* FIX: Added responsive padding for all buttons */
   padding: clamp(15px, 3vh, 25px) clamp(30px, 5vw, 50px);
   border-radius: 25px;
   text-align: center;
@@ -115,7 +115,7 @@ a.text, a.text2 {
   display: inline-block;
   color: black;
   text-decoration: none;
-  font-size: clamp(1.5rem, 4vw, 2.5rem); /* Responsive font size */
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
   font-weight: bold;
   transition: all 0.3s ease-out;
 }
@@ -126,14 +126,15 @@ a.text, a.text2 {
   text-shadow: 2px 2px 0 black, -2px -2px 0 black, -2px 2px 0 black, 2px -2px 0 black;
 }
 
+/* --- CHANGE #2: UPDATED GRID PLACEMENT FOR GAME MENU --- */
 /* --- 6. GRID PLACEMENT FOR GAME MENU PAGES --- */
 
-#sangomon .header2, #nigomon .header2 { grid-column: 1 / -1; }
-#sangomon .button-mon2, #nigomon .button-mon2 { grid-column: 1; grid-row: 2; }
-#sangomon .button-tsuika, #nigomon .button-tsuika { grid-column: 2; grid-row: 2; }
-#sangomon .button-mon1, #nigomon .button-mon1 { grid-column: 3; grid-row: 2; }
-#sangomon .button-back, #nigomon .button-back { grid-column: 1; grid-row: 3; }
-#sangomon .button-start, #nigomon .button-start { grid-column: 3; grid-row: 3; }
+#sangomon .header2, #nigomon .header2 { grid-column: 1 / -1; grid-row: 1; }
+#sangomon .button-mon2, #nigomon .button-mon2 { grid-column: 1; grid-row: 2; } /* 5もん */
+#sangomon .button-mon1, #nigomon .button-mon1 { grid-column: 3; grid-row: 2; } /* 10もん */
+#sangomon .button-tsuika, #nigomon .button-tsuika { grid-column: 2; grid-row: 3; } /* 追加 */
+#sangomon .button-back, #nigomon .button-back { grid-column: 1; grid-row: 4; } /* もどる */
+#sangomon .button-start, #nigomon .button-start { grid-column: 3; grid-row: 4; } /* さいしょに... */
 
 /* --- 7. GRID PLACEMENT FOR SELECTION PAGE --- */
 
