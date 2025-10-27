@@ -130,8 +130,8 @@ a.text, a.text2 {
 /* --- 6. GRID PLACEMENT FOR GAME MENU PAGES --- */
 
 #sangomon .header2, #nigomon .header2 { grid-column: 1 / -1; grid-row: 1; }
-#sangomon .button-mon2, #nigomon .button-mon2 { grid-column: 1; grid-row: 2;} /* 5もん */
-#sangomon .button-mon1, #nigomon .button-mon1 {  transform: (30vh);} /* 10もん */
+#sangomon .button-mon2, #nigomon .button-mon2 { grid-column: 1; grid-row: 2; } /* 5もん */
+#sangomon .button-mon1, #nigomon .button-mon1 { grid-column: 3; grid-row: 2; } /* 10もん */
 #sangomon .button-tsuika, #nigomon .button-tsuika { grid-column: 2; grid-row: 3; } /* 追加 */
 #sangomon .button-back, #nigomon .button-back { grid-column: 1; grid-row: 4; } /* もどる */
 #sangomon .button-start, #nigomon .button-start { grid-column: 3; grid-row: 4; } /* さいしょに... */
