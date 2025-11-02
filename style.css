@@ -135,7 +135,9 @@ a.text, a.text2 {
 #sangomon .button-tsuika, #nigomon .button-tsuika { grid-column: 2; grid-row: 3; } /* 追加 */
 #sangomon .button-back, #nigomon .button-back { grid-column: 1; grid-row: 4; } /* もどる */
 #sangomon .button-start, #nigomon .button-start { grid-column: 3; grid-row: 4; } /* さいしょに... */
-
+#game .button-menu{ position: fixed;
+  bottom: 30px;  /* 30px from the bottom edge */
+  right: 30px; }
 /* --- 7. GRID PLACEMENT FOR SELECTION PAGE --- */
 
 #selection .button-1 { grid-column: 1; grid-row: 2; }
@@ -153,6 +155,7 @@ a.text, a.text2 {
 
 /* --- 9. PAGE-SPECIFIC BACKGROUNDS --- */
 
+
 #home-page { background-image: url('bg_school_koutei.jpg'); }
 #sangomon, #nigomon { background-image: url('bg_school_room_back.jpg'); }
 #selection { background-image: url('bg_school_taiikukan.jpg'); }
@@ -163,3 +166,5 @@ a.text, a.text2 {
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
+
+

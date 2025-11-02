@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ゲーム画面 (Game Page)</title>
+     <link rel="stylesheet" href="./sanitize.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rampart+One&display=swap" rel="stylesheet">
+  
+    <link rel="stylesheet" href="game_style.css">
+</head>
+<body>
+<header class="game-header">
+        <!-- Menu Button (now top-left) -->
+        <button id="open-menu-btn" class="menu-button-header">メニュー</button>
+        
+        <!-- Question Counter (now top-right) -->
+        <div id="question-counter" class="question-counter">
+            1/10 問
+        </div>
+    </header>
+
+    <!-- --- MAIN GAME AREA --- -->
+    <main class="game-container">
+
+        <!-- 1. NEW: Middle Area Wrapper (Image + Answers) -->
+        <div class="middle-game-area">
+            <!-- Tracing Area (Your "h" drawing) -->
+            <div class="tracing-area-container">
+                <canvas id="tracing-canvas"></canvas>
+            </div>
+
+            <!-- Answer Slots (Your "あかい..." underlines) -->
+            <div id="answer-slots-container" class="answer-slots-container">
+                <div class="answer-slot"></div>
+                <div class="answer-slot"></div>
+                <div class="answer-slot"></div>
+                <div class="answer-slot"></div>
+                <div class="answer-slot"></div>
+            </div>
+        </div>
+
+        <!-- 2. Hiragana Grid (Your "ひらがな" box) -->
+        <div id="hiragana-container" class="hiragana-grid-container">
+            <!-- JavaScript will add buttons here -->
+        </div>
+
+    </main>
+
+    <!-- --- POP-UP MENU (Hidden) --- -->
+    <div id="menu-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>メニュー</h2>
+            
+            
+            <button id="close-menu-btn" class="modal-close-button">ゲームにもどる</button>
+            <a class="modal-return"href="page2.html">メニューにもどる</a>
+         
+        
+        </div>
+    </div>
+<script src="game_logic.js"></script>
+</body>
+</html>
+
+
+
