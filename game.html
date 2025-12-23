@@ -14,26 +14,29 @@
 </head>
 <body>
 <header class="game-header">
-        <!-- Menu Button (now top-left) -->
+       
         <button id="open-menu-btn" class="menu-button-header">メニュー</button>
         
-        <!-- Question Counter (now top-right) -->
+        
         <div id="question-counter" class="question-counter">
-            1/10 問
+            
         </div>
     </header>
 
-    <!-- --- MAIN GAME AREA --- -->
+
     <main class="game-container">
 
-        <!-- 1. NEW: Middle Area Wrapper (Image + Answers) -->
+       
         <div class="middle-game-area">
-            <!-- Tracing Area (Your "h" drawing) -->
+           
             <div class="tracing-area-container">
-                <canvas id="tracing-canvas"></canvas>
+                
+             <div class="canvas-wrapper">
+                <img id="question-image" src="" alt="Question Image">
+                
             </div>
-
-            <!-- Answer Slots (Your "あかい..." underlines) -->
+</div>
+        
             <div id="answer-slots-container" class="answer-slots-container">
                 <div class="answer-slot"></div>
                 <div class="answer-slot"></div>
@@ -43,14 +46,14 @@
             </div>
         </div>
 
-        <!-- 2. Hiragana Grid (Your "ひらがな" box) -->
+   
         <div id="hiragana-container" class="hiragana-grid-container">
-            <!-- JavaScript will add buttons here -->
+           
         </div>
 
     </main>
 
-    <!-- --- POP-UP MENU (Hidden) --- -->
+ 
     <div id="menu-modal" class="modal-overlay">
         <div class="modal-content">
             <h2>メニュー</h2>
@@ -62,7 +65,22 @@
         
         </div>
     </div>
-<script src="game_logic.js"></script>
+    <div id="tracing-modal" class="modal-overlay">
+        <div class="modal-content tracing-content">
+            <div class="trace-buttons">
+             <button id="undo-btn">もどる</button>
+                <button id="clear-btn">けす</button>
+                <button id="done-btn">できた</button>
+            </div>
+            <h2>なぞってみよう！</h2>
+       
+            <div class="drawing-box">
+                <canvas id="tracing-canvas"></canvas>
+            </div>
+            <p>かきおわったら、はなしてね</p>
+        </div>
+    </div>
+<script type="module" src="game_logic.js"></script>
 </body>
 </html>
 
