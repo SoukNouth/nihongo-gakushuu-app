@@ -1,4 +1,4 @@
-@charset "utf--8";
+@charset "utf-8";
 
 /* --- 1. KEYFRAME ANIMATIONS --- */
 
@@ -45,22 +45,64 @@ html, body {
   padding-bottom: 33vh;
 }
 
-/* Selection Page: Custom grid layout */
+/* Selection Page: Grid Layout for precise positioning */
 #selection .center-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto 1fr;
-  place-items: center;
-  gap: 20px;
+  grid-template-columns: 1fr 1fr 1fr; /* Left, Middle, Right columns */
+  grid-template-rows: auto 1fr auto;  /* Row 1: Title, Row 2: Main Buttons, Row 3: Bottom Buttons */
+  min-height: 100vh;
   padding: 5vh 10vw;
+  padding-bottom: 30px;
+  box-sizing: border-box;
+  gap: 20px;
+  align-items: center; /* Vertically center the game buttons */
 }
 
-/* --- CHANGE #1: UPDATED GRID ROWS FOR GAME MENU --- */
+/* Title (ゲームタイプ): Top Row, spans all columns */
+#selection .header2 {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  justify-self: center;
+}
+
+/* 2ごぶん: Left Side, Middle Row */
+#selection .button-1 {
+  grid-column: 1;
+  grid-row: 2;
+  justify-self: center;
+}
+
+/* 3ごぶん: Right Side, Middle Row */
+#selection .button-2 {
+  grid-column: 3;
+  grid-row: 2;
+  justify-self: center;
+}
+
+/* もどる: Bottom Middle (Row 3) */
+#selection .button-3 {
+  grid-column: 2;
+  grid-row: 3;
+  justify-self: center;
+  align-self: end;
+}
+
+/* 追加: Bottom Right (Row 3) */
+#selection .button-tsuika {
+  grid-column: 3;
+  grid-row: 3;
+  justify-self: end;
+  align-self: end;
+  margin-top: 0; /* Reset margin since we use Grid placement now */
+  width: auto;   /* Allow it to fit content nicely */
+  min-width: 150px;
+}
+
 /* Game Menu Pages: Custom grid layout */
 #sangomon .center-container, #nigomon .center-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: auto auto 1fr auto; /* Changed to 4 rows for more control */
+  grid-template-rows: auto auto 1fr auto; 
   place-items: center;
   gap: 15px;
   padding: 5vh 5vw;
@@ -126,35 +168,55 @@ a.text, a.text2 {
   text-shadow: 2px 2px 0 black, -2px -2px 0 black, -2px 2px 0 black, 2px -2px 0 black;
 }
 
-/* --- CHANGE #2: UPDATED GRID PLACEMENT FOR GAME MENU --- */
-/* --- 6. GRID PLACEMENT FOR GAME MENU PAGES --- */
+/* --- 6. SPECIFIC BUTTON STYLES --- */
+
+/* The Add Button */
+.button-tsuika {
+    background-color: #95a5a6; 
+    border: 2px dashed #7f8c8d;
+    box-shadow: none; /* Remove default box shadow if desired */
+    width: 200px;
+    text-align: center;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.button-tsuika a.text {
+    font-size: 1.5rem; /* Slightly smaller text */
+}
+
+/* --- 7. GRID PLACEMENT FOR GAME MENU PAGES --- */
 
 #sangomon .header2, #nigomon .header2 { grid-column: 1 / -1; grid-row: 1; }
 #sangomon .button-mon2, #nigomon .button-mon2 { grid-column: 1; grid-row: 2; } /* 5もん */
 #sangomon .button-mon1, #nigomon .button-mon1 { grid-column: 3; grid-row: 2; } /* 10もん */
-#sangomon .button-tsuika, #nigomon .button-tsuika { grid-column: 2; grid-row: 3; } /* 追加 */
+
 #sangomon .button-back, #nigomon .button-back { grid-column: 1; grid-row: 4; } /* もどる */
 #sangomon .button-start, #nigomon .button-start { grid-column: 3; grid-row: 4; } /* さいしょに... */
-#game .button-menu{ position: fixed;
-  bottom: 30px;  /* 30px from the bottom edge */
-  right: 30px; }
-/* --- 7. GRID PLACEMENT FOR SELECTION PAGE --- */
 
-#selection .button-1 { grid-column: 1; grid-row: 2; }
-#selection .button-2 { grid-column: 2; grid-row: 2; }
-#selection .button-3 { grid-column: 1 / -1; grid-row: 3; }
+#game .button-menu { 
+  position: fixed;
+  bottom: 30px;
+  right: 30px; 
+}
 
 /* --- 8. RESPONSIVE STYLES FOR MOBILE --- */
 
 @media (max-width: 768px) {
   #sangomon .center-container, #nigomon .center-container, #selection .center-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
+  }
+  
+  /* Reset grid specific margins for mobile flex layout */
+  #selection .button-tsuika {
+      margin-top: 20px;
+      align-self: center;
   }
 }
 
 /* --- 9. PAGE-SPECIFIC BACKGROUNDS --- */
-
 
 #home-page { background-image: url('bg_school_koutei.jpg'); }
 #sangomon, #nigomon { background-image: url('bg_school_room_back.jpg'); }
@@ -166,5 +228,3 @@ a.text, a.text2 {
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
-
-
