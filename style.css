@@ -1,6 +1,6 @@
 @charset "utf-8";
 
-/* --- 1. KEYFRAME ANIMATIONS --- */
+
 
 @keyframes startpagetitle {
   0%   { transform: translateY(-300px); opacity: 0; }
@@ -16,7 +16,7 @@
   100% { transform: scale(1) rotate(360deg); opacity: 1; }
 }
 
-/* --- 2. GENERAL & GLOBAL STYLES --- */
+
 
 html, body {
   height: 100%;
@@ -24,7 +24,7 @@ html, body {
   font-family: "Rampart One", sans-serif;
 }
 
-/* --- 3. LAYOUT CONTAINERS --- */
+
 
 .center-container {
   display: flex;
@@ -36,50 +36,48 @@ html, body {
   box-sizing: border-box;
 }
 
-/* --- 4. PAGE-SPECIFIC LAYOUTS --- */
 
-/* Home Page: Title at top, button more centered */
 #home-page .center-container {
   justify-content: space-between;
   padding-top: 6vh;
   padding-bottom: 33vh;
 }
 
-/* Selection Page: Grid Layout for precise positioning */
+
 #selection .center-container {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr; /* Left, Middle, Right columns */
-  grid-template-rows: auto 1fr auto;  /* Row 1: Title, Row 2: Main Buttons, Row 3: Bottom Buttons */
+  grid-template-columns: 1fr 1fr 1fr; 
+  grid-template-rows: auto 1fr auto; 
   min-height: 100vh;
   padding: 5vh 10vw;
   padding-bottom: 30px;
   box-sizing: border-box;
   gap: 20px;
-  align-items: center; /* Vertically center the game buttons */
+  align-items: center; 
 }
 
-/* Title (ゲームタイプ): Top Row, spans all columns */
+
 #selection .header2 {
   grid-column: 1 / -1;
   grid-row: 1;
   justify-self: center;
 }
 
-/* 2ごぶん: Left Side, Middle Row */
+
 #selection .button-1 {
   grid-column: 1;
   grid-row: 2;
   justify-self: center;
 }
 
-/* 3ごぶん: Right Side, Middle Row */
+
 #selection .button-2 {
   grid-column: 3;
   grid-row: 2;
   justify-self: center;
 }
 
-/* もどる: Bottom Middle (Row 3) */
+
 #selection .button-3 {
   grid-column: 2;
   grid-row: 3;
@@ -87,18 +85,17 @@ html, body {
   align-self: end;
 }
 
-/* 追加: Bottom Right (Row 3) */
 #selection .button-tsuika {
   grid-column: 3;
   grid-row: 3;
   justify-self: end;
   align-self: end;
-  margin-top: 0; /* Reset margin since we use Grid placement now */
-  width: auto;   /* Allow it to fit content nicely */
+  margin-top: 0; 
+  width: auto;  
   min-width: 150px;
 }
 
-/* Game Menu Pages: Custom grid layout */
+
 #sangomon .center-container, #nigomon .center-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -108,9 +105,7 @@ html, body {
   padding: 5vh 5vw;
 }
 
-/* --- 5. COMPONENT STYLES (HEADERS & BUTTONS) --- */
 
-/* Main page titles */
 .header h1, .header2 h1 {
   animation: startpagetitle 1s ease-out forwards;
   margin: 0;
@@ -123,7 +118,6 @@ html, body {
   white-space: nowrap;
 }
 
-/* Shared styles for ALL buttons */
 .box, .box2 {
   opacity: 0;
   animation: startButtonanimation 1.2s ease-out 0.5s forwards;
@@ -133,26 +127,26 @@ html, body {
   text-align: center;
 }
 
-/* Blue buttons */
+
 .box {
   background-color: #4A90E2;
   border: 5px solid #004AAD;
   box-shadow: 0 0 0 5px #004AAD, -3px -3px 0 8px #000, 3px 3px 0 8px #000;
 }
 
-/* Red buttons */
+
 .box2 {
   background-color: #ff6464;
   border: 5px solid #ff0000;
   box-shadow: 0 0 0 5px #f44242, -3px -3px 0 8px #000, 3px 3px 0 8px #000;
 }
 
-/* Hover effect for ALL buttons */
+
 .box:hover, .box2:hover {
   transform: scale(1.1);
 }
 
-/* Default text style inside buttons */
+
 a.text, a.text2 {
   display: inline-block;
   color: black;
@@ -162,19 +156,17 @@ a.text, a.text2 {
   transition: all 0.3s ease-out;
 }
 
-/* Text style on hover */
+
 .box:hover a, .box2:hover a {
   color: white;
   text-shadow: 2px 2px 0 black, -2px -2px 0 black, -2px 2px 0 black, 2px -2px 0 black;
 }
 
-/* --- 6. SPECIFIC BUTTON STYLES --- */
 
-/* The Add Button */
 .button-tsuika {
     background-color: #95a5a6; 
     border: 2px dashed #7f8c8d;
-    box-shadow: none; /* Remove default box shadow if desired */
+    box-shadow: none;
     width: 200px;
     text-align: center;
     border-radius: 10px;
@@ -182,17 +174,16 @@ a.text, a.text2 {
 }
 
 .button-tsuika a.text {
-    font-size: 1.5rem; /* Slightly smaller text */
+    font-size: 1.5rem; 
 }
 
-/* --- 7. GRID PLACEMENT FOR GAME MENU PAGES --- */
 
 #sangomon .header2, #nigomon .header2 { grid-column: 1 / -1; grid-row: 1; }
-#sangomon .button-mon2, #nigomon .button-mon2 { grid-column: 1; grid-row: 2; } /* 5もん */
-#sangomon .button-mon1, #nigomon .button-mon1 { grid-column: 3; grid-row: 2; } /* 10もん */
+#sangomon .button-mon2, #nigomon .button-mon2 { grid-column: 1; grid-row: 2; } 
+#sangomon .button-mon1, #nigomon .button-mon1 { grid-column: 3; grid-row: 2; } 
 
-#sangomon .button-back, #nigomon .button-back { grid-column: 1; grid-row: 4; } /* もどる */
-#sangomon .button-start, #nigomon .button-start { grid-column: 3; grid-row: 4; } /* さいしょに... */
+#sangomon .button-back, #nigomon .button-back { grid-column: 1; grid-row: 4; } 
+#sangomon .button-start, #nigomon .button-start { grid-column: 3; grid-row: 4; } 
 
 #game .button-menu { 
   position: fixed;
@@ -200,7 +191,7 @@ a.text, a.text2 {
   right: 30px; 
 }
 
-/* --- 8. RESPONSIVE STYLES FOR MOBILE --- */
+
 
 @media (max-width: 768px) {
   #sangomon .center-container, #nigomon .center-container, #selection .center-container {
@@ -209,14 +200,14 @@ a.text, a.text2 {
     justify-content: center;
   }
   
-  /* Reset grid specific margins for mobile flex layout */
+
   #selection .button-tsuika {
       margin-top: 20px;
       align-self: center;
   }
 }
 
-/* --- 9. PAGE-SPECIFIC BACKGROUNDS --- */
+
 
 #home-page { background-image: url('bg_school_koutei.jpg'); }
 #sangomon, #nigomon { background-image: url('bg_school_room_back.jpg'); }

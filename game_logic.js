@@ -485,7 +485,7 @@ function showResultScreen() {
     }
 }
 
-// --- TRACING LOGIC ---
+
 const tracingCanvas = document.getElementById('tracing-canvas');
 const ctx = tracingCanvas.getContext('2d', { willReadFrequently: true });
 
