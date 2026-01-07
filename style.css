@@ -212,7 +212,27 @@ a.text, a.text2 {
 #home-page { background-image: url('bg_school_koutei.jpg'); }
 #sangomon, #nigomon { background-image: url('bg_school_room_back.jpg'); }
 #selection { background-image: url('bg_school_taiikukan.jpg'); }
+@media (max-width: 768px) {
+  #sangomon .center-container, #nigomon .center-container, #selection .center-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; 
+  }
+  
+  
+  #selection .button-tsuika {
+      margin-top: 20px;
+      align-self: center; 
+  }
 
+  
+  #selection .button-3 {
+      align-self: center; 
+      justify-self: center;
+      margin-top: 20px; 
+  }
+}
 #home-page, #sangomon, #nigomon, #selection {
   background-size: cover;
   background-position: center;
