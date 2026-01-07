@@ -1,6 +1,26 @@
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAVvYZLRnhXw0r_L9qsWYKu2kQZmOyJSLs",
+    authDomain: "nihongo-naraimashou.firebaseapp.com",
+    projectId: "nihongo-naraimashou",
+    storageBucket: "nihongo-naraimashou.appspot.com",
+    messagingSenderId: "555772220708",
+    appId: "1:555772220708:web:230347906896dd49390fb1"
+};
+
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+
 const correctSound = new Audio('tadashii.mp3');
 const wrongSound = new Audio('machigai.mp3');
-
 
 let isTracingMode = false;
 let currentQuestionIndex = 0;
@@ -159,8 +179,8 @@ const problemDatabase = [
             { type: 'select', text: 'く' }
         ]
     },
-　　{
-    　　category : 2,
+    {
+        category : 2,
         image: 'image/fuku-yellow.png',
         parts: [
             { type: 'select', text: 'き' },
@@ -171,7 +191,7 @@ const problemDatabase = [
             { type: 'select', text: 'く' }
         ]
     },
-　　{
+    {
     category : 2,
         image: 'image/kago-yellow.png',
         parts: [
@@ -266,6 +286,7 @@ const problemDatabase = [
     
 ];
 
+
 const hiragana = [
     'あ', 'い', 'う', 'え', 'お',
     'か', 'き', 'く', 'け', 'こ',
@@ -304,13 +325,15 @@ const openMenuButton = document.getElementById('open-menu-btn');
 const closeMenuButton = document.getElementById('close-menu-btn');
 const menuModal = document.getElementById('menu-modal');
 
-openMenuButton.addEventListener('click', () => {
+if(openMenuButton) openMenuButton.addEventListener('click', () => {
     menuModal.classList.add('is-visible');
 });
 
-closeMenuButton.addEventListener('click', () => {
+if(closeMenuButton) closeMenuButton.addEventListener('click', () => {
     menuModal.classList.remove('is-visible');
 });
+
+
 
 
 function loadQuestion(index) {
@@ -321,8 +344,9 @@ function loadQuestion(index) {
 
     currentQuestionIndex = index;
     
+
     const probCounter = document.querySelector(".question-counter");
-    probCounter.innerHTML= (index + 1) + '/' + activeQuestions.length;
+    if(probCounter) probCounter.innerHTML= (index + 1) + '/' + activeQuestions.length;
     
     currentPartIndex = 0;
     currentLetterIndex = 0;
@@ -330,9 +354,12 @@ function loadQuestion(index) {
     
     const question = activeQuestions[index];
     const imageElement = document.getElementById('question-image');
+    
+    
     imageElement.src = question.image;
     
     imageElement.onerror = function() {
+        
         this.src = 'https://placehold.co/300x200?text=No+Image'; 
     };
 
@@ -364,9 +391,10 @@ function loadQuestion(index) {
 
 
 function checkAnswer(clickedChar) {
+    if (!activeQuestions || activeQuestions.length === 0) return;
+
     const question = activeQuestions[currentQuestionIndex];
     const currentPart = question.parts[currentPartIndex];
-    
     
     if (currentPart.type === 'trace') return;
 
@@ -388,7 +416,6 @@ function checkAnswer(clickedChar) {
             currentPartIndex++;
             currentLetterIndex = 0;
             
-           
             if (currentPartIndex < question.parts.length) {
                 const nextPart = question.parts[currentPartIndex];
                 if (nextPart.type === 'trace') {
@@ -396,7 +423,6 @@ function checkAnswer(clickedChar) {
                     return; 
                 }
             } else {
-                
                 if (!mistakeMade) score++; 
                 setTimeout(() => loadQuestion(++currentQuestionIndex), 500);
             }
@@ -408,13 +434,12 @@ function checkAnswer(clickedChar) {
         console.log("Wrong Select");
     }
 }
+
 function showResultScreen() {
-    
     const overlay = document.createElement('div');
     overlay.className = 'modal-overlay is-visible';
     overlay.id = 'result-modal';
 
-   
     const content = document.createElement('div');
     content.className = 'modal-content';
    
@@ -427,29 +452,21 @@ function showResultScreen() {
     scoreText.style.margin = "20px 0";
     scoreText.style.color = "#2ecc71"; 
     
-    
     const controls = document.createElement('div');
     controls.className = 'modal-controls';
     
-   
     const againBtn = document.createElement('button');
     againBtn.className = 'control-btn';
     againBtn.textContent = "もういちど"; 
     againBtn.style.background = "#3498db"; 
     againBtn.onclick = () => location.reload(); 
     
-   
     const backBtn = document.createElement('button');
     backBtn.className = 'control-btn';
     backBtn.textContent = "もどる"; 
     backBtn.style.background = "#e74c3c"; 
     backBtn.onclick = () => {
-        
-        if (document.referrer.indexOf("game.html") === -1) {
-             history.back();
-        } else {
-             window.location.href = "index.html";
-        }
+        window.location.href = "page2.html";
     };
     
     controls.appendChild(againBtn);
@@ -460,7 +477,6 @@ function showResultScreen() {
     content.appendChild(controls);
     overlay.appendChild(content);
     
-    
     document.body.appendChild(overlay);
     
     if(score === activeQuestions.length){
@@ -469,6 +485,7 @@ function showResultScreen() {
     }
 }
 
+// --- TRACING LOGIC ---
 const tracingCanvas = document.getElementById('tracing-canvas');
 const ctx = tracingCanvas.getContext('2d', { willReadFrequently: true });
 
@@ -545,9 +562,7 @@ function drawGhost(letter) {
     const x = ghostCanvas.width / 2;
     const y = ghostCanvas.height / 2;
     
-    
     ghostCtx.fillText(letter, x, y);
-    
     
     const ghostWidth = Math.min(ghostCanvas.width, ghostCanvas.height) * 0.18;
     
@@ -560,7 +575,6 @@ function drawGhost(letter) {
 
 function redrawCanvas(letter) {
   ctx.clearRect(0, 0, tracingCanvas.width, tracingCanvas.height);
-
   
   const fontSize = Math.min(tracingCanvas.width, tracingCanvas.height) * 0.7;
   ctx.font = `bold ${fontSize}px sans-serif`; 
@@ -569,7 +583,6 @@ function redrawCanvas(letter) {
   ctx.textBaseline = "middle";
   ctx.fillText(letter, tracingCanvas.width / 2, tracingCanvas.height / 2);
 
-  
   setDrawingStyle(); 
 
   strokes.forEach(stroke => {
@@ -639,7 +652,6 @@ function isTracingCorrect(letter) {
   const w = tracingCanvas.width;
   const h = tracingCanvas.height;
 
- 
   const validStrokes = strokes.filter(s => {
       let length = 0;
       for(let i=1; i<s.length; i++) {
@@ -650,7 +662,6 @@ function isTracingCorrect(letter) {
       return length > 10; 
   });
 
-  
   const userImg = ctx.getImageData(0, 0, w, h).data;
   const ghostImg = ghostCtx.getImageData(0, 0, w, h).data;
   
@@ -664,8 +675,6 @@ function isTracingCorrect(letter) {
       const userRed = userImg[i]; 
       
       const isTarget = ghostAlpha > 50; 
-      
-      
       const isUserInk = userAlpha > 100 && userRed < 100; 
       
       if (isTarget) {
@@ -680,22 +689,12 @@ function isTracingCorrect(letter) {
       }
   }
   
-  if (targetPixels === 0) {
-      console.warn("Ghost target is empty! Check drawGhost function.");
-      return true; 
-  }
-  
+  if (targetPixels === 0) return true; 
 
   const coverage = (overlapPixels / targetPixels) * 100; 
-  
   const outside = filledPixels - overlapPixels;
   const errorRate = filledPixels > 0 ? (outside / filledPixels) * 100 : 100; 
   
- 
-  console.log(`[Tracing Debug] Pixels(Target/Filled/Overlap): ${targetPixels}/${filledPixels}/${overlapPixels}`);
-  console.log(`[Tracing Result] Coverage: ${coverage.toFixed(1)}% (Req > 10%), Error: ${errorRate.toFixed(1)}% (Req < 70%)`);
-  
-
   return (coverage > 20 && errorRate < 50);
 }
 
@@ -735,7 +734,7 @@ document.getElementById('done-btn').onclick = () => {
     wrongSound.currentTime = 0;
     wrongSound.play();
     mistakeMade = true; 
-    alert("Please trace inside the lines!");
+    alert("ラインの中でなぞれ");
   }
 };
 
@@ -768,32 +767,62 @@ function shuffleArray(array) {
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
-document.addEventListener('DOMContentLoaded', () => {
-  
-    score = 0;
 
- 
+
+document.addEventListener('DOMContentLoaded', async () => {
+    score = 0;
+    const probCounter = document.querySelector(".question-counter");
+    if(probCounter) probCounter.innerHTML = "読込中..."; 
+
     const params = new URLSearchParams(window.location.search);
-    
     const categoryParam = params.get('category');
     const category = categoryParam ? parseInt(categoryParam) : 2; 
 
     const countParam = params.get('count');
     const maxCount = countParam ? parseInt(countParam) : 5;
 
+    try {
+        await signInAnonymously(auth);
+        console.log("Signed in anonymously");
+    } catch (error) {
+        console.error("Auth Error:", error);
+       
+    }
+
+   
+    let downloadedQuestions = [];
+    try {
+        const snapshot = await getDocs(collection(db, "questions"));
+        snapshot.forEach(doc => {
+           
+            downloadedQuestions.push(doc.data());
+        });
+        console.log("Downloaded questions from Firebase:", downloadedQuestions.length);
+    } catch (e) {
+        console.error("Firebase Error (Continuing with local data only):", e);
+        if(probCounter) probCounter.innerHTML = "DB Error (Using Local)";
+    }
+
     
-    const filtered = problemDatabase.filter(p => p.category === category);
+    const allQuestions = [...problemDatabase, ...downloadedQuestions];
+    console.log("Total Combined Questions:", allQuestions.length);
+
+ 
+    const filtered = allQuestions.filter(p => p.category === category);
     
-    shuffleArray(filtered);
-    
-    activeQuestions = filtered.slice(0, Math.min(maxCount, filtered.length));
-    
-    if(activeQuestions.length === 0) {
-        console.error("No questions found for category " + category);
-        alert("No questions found! Please check problemDatabase tags.");
+    if(filtered.length === 0) {
+        alert(`まだこのレベルの問題がありません！\n(No Level ${category} questions found)\n管理画面で追加してください。`);
+        if(probCounter) probCounter.innerHTML = "0/0";
         return;
     }
 
+    shuffleArray(filtered);
+    activeQuestions = filtered.slice(0, Math.min(maxCount, filtered.length));
 
-    loadQuestion(0);
+   
+    if(probCounter) probCounter.innerHTML = `Loaded: ${downloadedQuestions.length} (DB) + ${problemDatabase.length} (Local)`;
+
+    setTimeout(() => {
+        loadQuestion(0);
+    }, 10); 
 });
