@@ -12,42 +12,42 @@
         .admin-container {
             max-width: 600px;
             margin: 0 auto;
-            background: white;
+            background: rgb(255, 255, 255);
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         h1 { color: #333; margin-bottom: 20px; font-size: 24px; }
-        .form-group { margin-bottom: 20px; text-align: left; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; }
+        .form-group {display: block; font-weight: bold; margin-bottom: 5px; color: #000000; margin-bottom: 20px; text-align: left; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #0da9fc; }
         input[type="text"], select, input[type="file"] {
-            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;
+            width: 100%; padding: 10px; border: 1px solid #000000; border-radius: 5px; font-size: 16px;
         }
         button.save-btn {
-            background-color: #27ae60; 
+            background-color: #308fa4; 
             color: white; border: none; padding: 15px; width: 100%;
             font-size: 18px; border-radius: 8px; cursor: pointer; font-weight: bold;
             transition: background 0.3s;
         }
-        button.save-btn:hover { background-color: #219150; }
+        button.save-btn:hover { background-color: #3ce5ff; }
         button.save-btn:disabled { background-color: #ccc; cursor: not-allowed; }
         
-        .back-link { display: block; margin-top: 20px; color: #7f8c8d; text-decoration: none; }
+        .back-link { display: block; font-weight: bold; margin-bottom: 5px; color: #0da9fc; }
         
        
         #status { margin-top: 15px; font-weight: bold; padding: 10px; border-radius: 5px; display: none;}
-        .connection-box { background: #e8f5e9; color: #2e7d32; padding: 10px; margin-bottom: 20px; border-radius: 5px; font-size: 0.9em; text-align: center;}
+        .connection-box { background: #e8f5e9; color: #377387; padding: 10px; margin-bottom: 20px; border-radius: 5px; font-size: 0.9em; text-align: center;}
 
         
-        .recent-section { margin-top: 40px; border-top: 2px solid #eee; padding-top: 20px; }
+        .recent-section { margin-top: 40px; border-top: 2px solid #ffffff; padding-top: 20px; }
         .recent-title { font-size: 1.2em; color: #333; margin-bottom: 15px; font-weight: bold; }
         .question-item { 
-            display: flex; align-items: center; background: #fff; 
-            border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 8px; 
+            display: flex; align-items: center; background: #f2f2f2; 
+            border: 1px solid #fa0000; padding: 10px; margin-bottom: 10px; border-radius: 8px; 
         }
         .question-thumb { 
             width: 60px; height: 60px; object-fit: cover; border-radius: 5px; 
-            margin-right: 15px; border: 1px solid #eee; background: #eee;
+            margin-right: 15px; border: 1px solid #cd3636; background: #eee;
         }
         
         .delete-btn {
@@ -60,7 +60,10 @@
             margin-left: auto; 
             font-size: 0.8rem;
         }
-        .delete-btn:hover { background-color: #c0392b; }
+        .delete-btn:hover { background-color: #c0392b;}
+       
+        
+        
     </style>
 </head>
 <body>
@@ -93,7 +96,7 @@
         <small>※自動的に圧縮してデータベースに保存されます</small>
     </div>
 
-    <button id="uploadBtn" class="save-btn">保存する (Save)</button>
+    <button id="uploadBtn" class="save-btn">保存する</button>
     <p id="status"></p>
 
 
@@ -137,7 +140,7 @@
         try {
           
             await loadRecentQuestions();
-            statusBox.textContent = "✅ Database Connected! (Ready to save)";
+            statusBox.textContent = "✅ データベースに接続した";
         } catch (e) {
             console.error(e);
             statusBox.textContent = "❌ 接続エラー " + e.message;
