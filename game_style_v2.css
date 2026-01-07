@@ -1,14 +1,16 @@
+@charset "utf-8";
 
 html, body {
-    font-family: "Rampart One",-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Hiragino Sans', 'Noto Sans CJK JP', sans-serif;
+    font-family: "Rampart One", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Hiragino Sans', 'Noto Sans CJK JP', sans-serif;
     background-color: #f0f4f8; 
+    
     height: 100vh;
+    height: 100dvh; 
     margin: 0;
     overflow: hidden; 
     display: flex;
     flex-direction: column; 
     
-    /* --- FIX FOR BACKGROUND IMAGE --- */
     background-image: url('bg_school_room_yuyake.jpg'); 
     background-size: cover;    
     background-repeat: no-repeat; 
@@ -17,39 +19,36 @@ html, body {
 
 
 .game-header {
- 
- 
     display: flex;
     justify-content: space-between; 
     align-items: center;
-    
+    padding: 10px 20px; 
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-
+    
+    flex-shrink: 0; 
+    height: 60px; 
+    box-sizing: border-box;
 }
-
 
 .menu-button-header {
     border: 5px solid #020202; 
     border-radius: 15px;
     font-family: "Rampart One";
     background-color: #ff6464; 
-    color: white;
-    padding: 10px 20px;
-    font-size: 1.1rem;
+    color: rgb(0, 0, 0);
+    padding: 8px 16px;
+    font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
     transition: transform 0.2s; 
 }
 
-.menu-button-header:active {
-    transform: scale(0.95); 
-}
-
+.menu-button-header:active { transform: scale(0.95); }
 
 .question-counter {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: bold;
-    color: #333;
+    color: #151515;
 }
 
 
@@ -57,67 +56,69 @@ html, body {
 .game-container {
     width: 100%;
     flex-grow: 1; 
-    padding: 20px;
+    padding: 15px;
     box-sizing: border-box;
     display: grid;
-    grid-template-rows: 3fr 2fr; 
-    gap: 20px;
-    max-height: 100%;
+    
+    grid-template-rows: minmax(0, 1fr) auto; 
+    gap: 15px;
+    height: 100%; 
+    min-height: 0; 
+    overflow: hidden; 
 }
 
+
 .middle-game-area {
-    display: grid;
-   
-    grid-template-rows: 2fr 1fr;
-    gap: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     min-height: 0; 
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
+
 
 
 .tracing-area-container {
-    background-color: transparent;
-    border: none;
-    
-    
-    
+    flex-grow: 1; 
+    min-height: 0; 
     display: flex;
     justify-content: center;
     align-items: center;
-    
     width: 100%;
-    height: 100%;
-    min-height: 0;
-    overflow: hidden;
+    position: relative;
+    
+    border-radius: 10px;
 }
+
 .canvas-wrapper {
     position: relative; 
-    
-   display: flex;
-    
-    
-   
     display: flex;
     justify-content: center;
     align-items: center;
-       width: 100%;
+    width: 100%;
     height: 100%; 
+   
 }
+
 #question-image {
     display: block;
     max-width: 100%;
     max-height: 100%;
+    width: auto;
+    height: auto;
     object-fit: contain; 
-    display: block;
 }
+
 #tracing-canvas {
-    display: flex;
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     touch-action: none;
+    pointer-events: none; 
 }
+
 
 
 .answer-slots-container {
@@ -125,161 +126,104 @@ html, body {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center; 
-    gap: 15px;
+    gap: 10px;
+    padding: 5px 0;
+    flex-shrink: 0; 
 }
+
 .answer-slot {
-    width: 60px;
-    height: 80px;
+    width: 50px;
+    height: 70px;
     border-bottom: 5px solid #4a90e2; 
-    
-   
     display: flex;
     justify-content: center;
     align-items: center;
-    
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: bold;
     color: #333;
-}
-
-#question-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    display: block;
-}
-#tracing-canvas {
-    width: 100%;
-    height: 100%;
-   
-}
-.hiragana-grid-container {
-    border: 5px solid #006eff;
-    border-radius: 15px;
     
-    padding: 15px;
+    border-radius: 5px 5px 0 0;
+}
+.spacer { width: 15px; }
+
+
+.hiragana-grid-container {
+    border: 4px solid #006eff;
+    border-radius: 12px;
+    padding: 8px; 
     overflow-y: auto; 
     min-height: 0; 
-
+    
+   
+    max-height: 40vh; 
+    
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
+    gap: 6px; 
+   
 }
-
 
 .hiragana-grid-container button {
     background-color: #4a90e2;
     color: white;
     border: none;
-    border-radius: 10px;
-    padding: 15px 0;
-    font-size: 1.5rem;
+    border-radius: 8px;
+    padding: 12px 0; 
+    font-size: 1.2rem;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.2s, transform 0.2s;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3px 0px #2a60a2; 
+    touch-action: manipulation;
 }
-.hiragana-grid-container button:hover {
-    background-color: #357abd;
-    transform: scale(1.05);
-}
-
-
-
-@media (max-width: 768px) {
-    .game-container {
-        padding: 15px;
-        gap: 15px;
-        grid-template-rows: 1fr 1fr;
-    }
-
-    .answer-slot {
-        width: 50px;
-        height: 70px;
-        font-size: 2rem;
-    }
-
-    
-    .hiragana-grid-container {
-        grid-template-columns: repeat(4, 1fr);
-        padding: 10px;
-    }
-
-    .hiragana-grid-container button {
-        font-size: 1.3rem;
-        padding: 12px 0;
-    }
-
-    .menu-button-header {
-        padding: 8px 15px;
-        font-size: 1rem;
-    }
-
-    .question-counter {
-        font-size: 1.3rem;
-    }
+.hiragana-grid-container button:active {
+    transform: translateY(3px);
+    box-shadow: none;
 }
 
 
 
 @media (max-width: 480px) {
-    body {
-        overflow: auto; 
-    }
-    
-    .game-header {
-        padding: 10px 15px;
-    }
-    
-    .menu-button-header {
-        padding: 6px 10px;
-        font-size: 0.9rem;
-    }
-
-    .question-counter {
-        font-size: 1.1rem;
-    }
-
-    
     .game-container {
-        display: flex;
-        flex-direction: column;
         padding: 10px;
-        gap: 15px;
-        height: auto;
-    }
-
-    .middle-game-area {
+        gap: 10px;
+       
         grid-template-rows: 1fr 1fr; 
-    }
-
-    .tracing-area-container {
-        min-height: 150px; 
     }
 
     .answer-slot {
         width: 40px;
-        height: 60px;
-        font-size: 1.8rem;
-        border-bottom-width: 4px;
-        gap: 10px;
+        height: 55px;
+        font-size: 1.5rem;
+        border-bottom-width: 3px;
     }
-
-   
+    
     .hiragana-grid-container {
-        grid-template-columns: repeat(3, 1fr);
-        min-height: 200px;
-        flex-shrink: 0;
+        grid-template-columns: repeat(5, 1fr);
+        padding: 5px;
+        max-height: none; 
     }
-
+    
     .hiragana-grid-container button {
-        font-size: 1.2rem;
+        padding: 8px 0;
+        font-size: 1.1rem;
     }
+}
 
- 
-    .modal-content {
-        width: 90vw; 
-        padding: 20px;
+
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container {
+        grid-template-columns: 1fr 1fr; 
+        grid-template-rows: 1fr;
+    }
+    
+    .middle-game-area {
+        height: 100%;
+        justify-content: center;
+    }
+    
+    .hiragana-grid-container {
+        max-height: 100%;
+        overflow-y: auto;
     }
 }
 
@@ -287,10 +231,8 @@ html, body {
 
 .modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
@@ -300,107 +242,58 @@ html, body {
     opacity: 0;
     transition: opacity 0.3s, visibility 0.3s;
 }
-.modal-overlay.is-visible {
-    visibility: visible;
-    opacity: 1;
-}
+.modal-overlay.is-visible { visibility: visible; opacity: 1; }
 .modal-content {
     background-color: rgb(0, 170, 255);
     border: 5px solid #020202; 
     border-radius: 15px;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    padding: 20px;
     text-align: center;
     transform: scale(0.9);
     transition: transform 0.3s;
+    width: 90%; max-width: 400px;
 }
-.modal-overlay.is-visible .modal-content {
-    transform: scale(1);
-}
-.modal-content h2 { margin-top: 0; }
-.modal-close-button {
+.modal-overlay.is-visible .modal-content { transform: scale(1); }
+
+.modal-close-button, .modal-return {
     font-family: "Rampart One";
     display: block;
-  margin-left: auto;
-  margin-right: auto;
-    background-color: #4a90e2;
+    margin: 15px auto;
+    background-color: #4a90e2; 
     color: white;
     border: 5px solid #020202; 
-    border-radius: 15px;
-    padding: 10px 25px;
-    color: black;
-  text-decoration: none;
-    font-size: 1.1rem;
-  font-weight: bold;
-  transition: all 0.3s ease-out;
+    border-radius: 10px;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: bold;
     cursor: pointer;
-    margin-top: 20px;
-}
-.tracing-content {
-    background-color: #fff8e1;
-    max-width: 500px;
+    width: fit-content;
 }
 
-.drawing-box{
-background-color: white;
+
+.tracing-content { background-color: #fff8e1; }
+.drawing-box {
+    background-color: white;
     border: 3px dashed #333;
     border-radius: 10px;
     margin: 10px auto;
-    width: 80vw;       
-    max-width: 400px;  
+    width: 100%; max-width: 300px;
     aspect-ratio: 1/1; 
-    height: auto;
     position: relative;
     touch-action: none;
-
-
 }
-#tracing-canvas {
-    width: 100%;
-    height: 100%;
-    cursor: crosshair;
-}
-
-.space {
-    width: 30px;
-    height: 1px;
-}
-.modal-return{
-    
-   font-family: "Rampart One";
-    display: block;
-  margin-left: auto;
-  margin-right: auto;
-    background-color: #4a90e2;
-    border: 5px solid #020202; 
-    border-radius: 15px;
-    padding: 10px 25px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    display: inline-block;
-  color: black;
-  text-decoration: none;
-
-  font-weight: bold;
-  transition: all 0.3s ease-out;
-    margin-top: 20px;
-}
-.modal-return:hover,.modal-close-button:hover,.menu-button-header:hover{
-     color: white;
-  text-shadow: 2px 2px 0 rgb(0, 0, 0), -2px -2px 0 rgb(0, 0, 0), -2px 2px 0 rgb(0, 0, 0), 2px -2px 0 rgb(0, 0, 0);
-  transform: scale(1.1);
-}
-
-.space{
-
-width : 30px;
-height: 1px;
-background-color: transparent;}
 .trace-buttons {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-top: 10px;
+    display: flex; gap: 10px; justify-content: center; margin-bottom: 10px;
 }
+.trace-buttons button {
+    font-family: "Rampart One";
+    padding: 5px 15px;
+    border-radius: 8px;
+    border: 2px solid #333;
+    cursor: pointer;
+    background: white;
+}
+#done-btn { background: #a8e6cf; }
+#clear-btn { background: #ffaaa5; }
+#undo-btn { background: #dcedc1; }
