@@ -10,32 +10,31 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Rampart+One&display=swap" rel="stylesheet">
   
-    <link rel="stylesheet" href="game_style_v3.css">
+   
+    <link rel="stylesheet" href="game_style_v3.css?v=4">
 </head>
 <body>
 <header class="game-header">
        
         <button id="open-menu-btn" class="menu-button-header">メニュー</button>
         
-        
-        <div id="question-counter" class="question-counter">
-            
-        </div>
+        <div id="question-counter" class="question-counter"></div>
     </header>
 
 
     <main class="game-container">
 
-       
         <div class="middle-game-area">
            
             <div class="tracing-area-container">
-                
              <div class="canvas-wrapper">
                 <img id="question-image" src="" alt="Question Image">
                 
+                
+                <div id="feedback-maru" class="feedback-overlay">〇</div>
+                <div id="feedback-batsu" class="feedback-overlay">❌</div>
             </div>
-</div>
+            </div>
         
             <div id="answer-slots-container" class="answer-slots-container">
                 <div class="answer-slot"></div>
@@ -46,35 +45,30 @@
             </div>
         </div>
 
-   
-        <div id="hiragana-container" class="hiragana-grid-container">
-           
-        </div>
+        <div id="hiragana-container" class="hiragana-grid-container"></div>
 
     </main>
 
- 
     <div id="menu-modal" class="modal-overlay">
         <div class="modal-content">
             <h2>メニュー</h2>
-            
-            
             <button id="close-menu-btn" class="modal-close-button">ゲームにもどる</button>
             <a class="modal-return"href="page2.html">メニューにもどる</a>
-         
-        
         </div>
     </div>
+
+    
     <div id="tracing-modal" class="modal-overlay">
         <div class="modal-content tracing-content">
             <div class="trace-buttons">
-             <button id="undo-btn">もどる</button>
+                <button id="undo-btn">もどる</button>
                 <button id="clear-btn">けす</button>
                 <button id="done-btn">できた</button>
             </div>
             <h2>なぞってみよう！</h2>
        
             <div class="drawing-box">
+                
                 <canvas id="tracing-canvas"></canvas>
             </div>
             <p>かきおわったら、はなしてね</p>
@@ -83,6 +77,3 @@
 <script type="module" src="game_logic_v2.js"></script>
 </body>
 </html>
-
-
-

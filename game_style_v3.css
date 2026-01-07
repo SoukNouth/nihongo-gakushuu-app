@@ -3,7 +3,6 @@
 html, body {
     font-family: "Rampart One", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Hiragino Sans', 'Noto Sans CJK JP', sans-serif;
     background-color: #f0f4f8; 
-    
     height: 100vh;
     height: 100dvh; 
     margin: 0;
@@ -17,16 +16,14 @@ html, body {
     background-position: center;  
 }
 
-
 .game-header {
     display: flex;
     justify-content: space-between; 
     align-items: center;
     padding: 10px 20px; 
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    
     flex-shrink: 0; 
-    height: 60px; 
+    height: 60px;
     box-sizing: border-box;
 }
 
@@ -35,7 +32,7 @@ html, body {
     border-radius: 15px;
     font-family: "Rampart One";
     background-color: #ff6464; 
-    color: rgb(0, 0, 0);
+    color: white;
     padding: 8px 16px;
     font-size: 1rem;
     font-weight: bold;
@@ -48,9 +45,8 @@ html, body {
 .question-counter {
     font-size: 1.4rem;
     font-weight: bold;
-    color: #151515;
+    color: #333;
 }
-
 
 
 .game-container {
@@ -59,14 +55,12 @@ html, body {
     padding: 15px;
     box-sizing: border-box;
     display: grid;
-    
     grid-template-rows: minmax(0, 1fr) auto; 
     gap: 15px;
     height: 100%; 
     min-height: 0; 
     overflow: hidden; 
 }
-
 
 .middle-game-area {
     display: flex;
@@ -88,7 +82,7 @@ html, body {
     align-items: center;
     width: 100%;
     position: relative;
-    
+    background: transparent; 
     border-radius: 10px;
 }
 
@@ -99,7 +93,7 @@ html, body {
     align-items: center;
     width: 100%;
     height: 100%; 
-   
+    background: transparent; 
 }
 
 #question-image {
@@ -111,12 +105,45 @@ html, body {
     object-fit: contain; 
 }
 
+
+.feedback-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0); 
+    font-size: 15rem; 
+    pointer-events: none; 
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+    z-index: 10;
+    text-shadow: 0 0 20px rgba(255,255,255,0.8);
+}
+
+
+#feedback-maru {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #25aa27; 
+   
+    
+}
+
+
+#feedback-batsu {
+    color: #e74c3c;
+}
+
+
+.feedback-overlay.show {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+
 #tracing-canvas {
-   position: absolute;
+    position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
     touch-action: none;
-   
     pointer-events: auto; 
     background: transparent; 
     cursor: crosshair;
@@ -143,11 +170,12 @@ html, body {
     align-items: center;
     font-size: 2rem;
     font-weight: bold;
-    color: white;
-    
+    color: #ffffff;
+ 
     border-radius: 5px 5px 0 0;
 }
 .spacer { width: 15px; }
+
 
 
 .hiragana-grid-container {
@@ -156,14 +184,11 @@ html, body {
     padding: 8px; 
     overflow-y: auto; 
     min-height: 0; 
-    
-   
     max-height: 40vh; 
-    
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 6px; 
-   
+    
 }
 
 .hiragana-grid-container button {
@@ -189,7 +214,6 @@ html, body {
     .game-container {
         padding: 10px;
         gap: 10px;
-       
         grid-template-rows: 1fr 1fr; 
     }
 
@@ -210,8 +234,12 @@ html, body {
         padding: 8px 0;
         font-size: 1.1rem;
     }
+    
+    
+    .feedback-overlay {
+        font-size: 10rem;
+    }
 }
-
 
 @media (max-height: 500px) and (orientation: landscape) {
     .game-container {
@@ -229,7 +257,6 @@ html, body {
         overflow-y: auto;
     }
 }
-
 
 
 .modal-overlay {
@@ -262,7 +289,7 @@ html, body {
     font-family: "Rampart One";
     display: block;
     margin: 15px auto;
-    background-color: #4a90e2; 
+    background-color: #4a90e2;
     color: white;
     border: 5px solid #020202; 
     border-radius: 10px;
@@ -288,12 +315,12 @@ html, body {
 }
 .trace-buttons {
     display: flex; gap: 10px; justify-content: center; margin-bottom: 10px;
-}  
+}
 .trace-buttons button {
     font-family: "Rampart One";
     padding: 5px 15px;
     border-radius: 8px;
-    border: 2px solid #434141;
+    border: 2px solid #333;
     cursor: pointer;
     background: white;
 }

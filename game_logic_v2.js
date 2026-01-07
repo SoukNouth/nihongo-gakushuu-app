@@ -1,6 +1,8 @@
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
 
 const firebaseConfig = {
     apiKey: "AIzaSyAVvYZLRnhXw0r_L9qsWYKu2kQZmOyJSLs",
@@ -332,6 +334,19 @@ if(closeMenuButton) closeMenuButton.addEventListener('click', () => {
 });
 
 
+function showFeedback(type) {
+    const el = document.getElementById(type === 'correct' ? 'feedback-maru' : 'feedback-batsu');
+    if (!el) return;
+
+    el.classList.add('show');
+    
+    
+    setTimeout(() => {
+        el.classList.remove('show');
+    }, 600);
+}
+
+
 
 
 function loadQuestion(index) {
@@ -357,7 +372,7 @@ function loadQuestion(index) {
     imageElement.src = question.image;
     
     imageElement.onerror = function() {
-        
+     
         this.src = 'https://placehold.co/300x200?text=No+Image'; 
     };
 
@@ -401,6 +416,9 @@ function checkAnswer(clickedChar) {
     if(clickedChar == correctChar){
         correctSound.currentTime = 0; 
         correctSound.play();
+        
+        showFeedback('correct'); 
+        
         console.log("Correct Select");
         
         const slots = document.querySelectorAll(".answer-slot");
@@ -422,13 +440,14 @@ function checkAnswer(clickedChar) {
                 }
             } else {
                 if (!mistakeMade) score++; 
-                setTimeout(() => loadQuestion(++currentQuestionIndex), 500);
+                setTimeout(() => loadQuestion(++currentQuestionIndex), 800); 
             }
         }
 
     } else {
         wrongSound.currentTime = 0;
         wrongSound.play();
+        showFeedback('wrong');
         console.log("Wrong Select");
     }
 }
@@ -464,7 +483,7 @@ function showResultScreen() {
     backBtn.textContent = "もどる"; 
     backBtn.style.background = "#e74c3c"; 
     backBtn.onclick = () => {
-        window.location.href = "page2.html";
+        window.location.href = "page2.html"; 
     };
     
     controls.appendChild(againBtn);
@@ -710,6 +729,8 @@ function acceptTracingAnswer() {
     currentLetterIndex = 0;
     isTracingMode = false;
     
+    showFeedback('correct');
+
     if (currentPartIndex < question.parts.length) {
         const nextPart = question.parts[currentPartIndex];
         if (nextPart.type === 'trace') {
@@ -717,7 +738,7 @@ function acceptTracingAnswer() {
             return;
         }
     } else {
-         setTimeout(() => loadQuestion(++currentQuestionIndex), 500);
+         setTimeout(() => loadQuestion(++currentQuestionIndex), 800);
     }
 }
 
@@ -732,7 +753,7 @@ document.getElementById('done-btn').onclick = () => {
     wrongSound.currentTime = 0;
     wrongSound.play();
     mistakeMade = true; 
-    alert("もういちど");
+    alert("ラインの中でなぞれ");
   }
 };
 
@@ -770,7 +791,7 @@ function shuffleArray(array) {
 document.addEventListener('DOMContentLoaded', async () => {
     score = 0;
     const probCounter = document.querySelector(".question-counter");
-    if(probCounter) probCounter.innerHTML = "読込中..."; 
+    if(probCounter) probCounter.innerHTML = "読込中... (Connecting)"; 
 
     const params = new URLSearchParams(window.location.search);
     const categoryParam = params.get('category');
@@ -779,20 +800,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     const countParam = params.get('count');
     const maxCount = countParam ? parseInt(countParam) : 5;
 
+    
     try {
         await signInAnonymously(auth);
         console.log("Signed in anonymously");
     } catch (error) {
         console.error("Auth Error:", error);
-       
+        
     }
 
-   
+    
     let downloadedQuestions = [];
     try {
         const snapshot = await getDocs(collection(db, "questions"));
         snapshot.forEach(doc => {
-           
+          
             downloadedQuestions.push(doc.data());
         });
         console.log("Downloaded questions from Firebase:", downloadedQuestions.length);
@@ -801,11 +823,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         if(probCounter) probCounter.innerHTML = "DB Error (Using Local)";
     }
 
-    
+  
     const allQuestions = [...problemDatabase, ...downloadedQuestions];
     console.log("Total Combined Questions:", allQuestions.length);
 
- 
+   
     const filtered = allQuestions.filter(p => p.category === category);
     
     if(filtered.length === 0) {
@@ -817,10 +839,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     shuffleArray(filtered);
     activeQuestions = filtered.slice(0, Math.min(maxCount, filtered.length));
 
-   
+    
     if(probCounter) probCounter.innerHTML = `Loaded: ${downloadedQuestions.length} (DB) + ${problemDatabase.length} (Local)`;
 
+    
     setTimeout(() => {
         loadQuestion(0);
-    }, 10); 
+    }, 1000); 
 });
