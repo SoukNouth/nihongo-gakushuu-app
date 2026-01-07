@@ -25,7 +25,6 @@ html, body {
 }
 
 
-
 .center-container {
   display: flex;
   flex-direction: column;
@@ -46,7 +45,7 @@ html, body {
 
 #selection .center-container {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr; 
+  grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: auto 1fr auto; 
   min-height: 100vh;
   padding: 5vh 10vw;
@@ -55,7 +54,6 @@ html, body {
   gap: 20px;
   align-items: center; 
 }
-
 
 #selection .header2 {
   grid-column: 1 / -1;
@@ -85,16 +83,16 @@ html, body {
   align-self: end;
 }
 
+
 #selection .button-tsuika {
   grid-column: 3;
   grid-row: 3;
   justify-self: end;
   align-self: end;
   margin-top: 0; 
-  width: auto;  
+  width: auto;   
   min-width: 150px;
 }
-
 
 #sangomon .center-container, #nigomon .center-container {
   display: grid;
@@ -117,6 +115,7 @@ html, body {
   font-size: clamp(2.5rem, 9vw, 10rem);
   white-space: nowrap;
 }
+
 
 .box, .box2 {
   opacity: 0;
@@ -166,7 +165,7 @@ a.text, a.text2 {
 .button-tsuika {
     background-color: #95a5a6; 
     border: 2px dashed #7f8c8d;
-    box-shadow: none;
+    box-shadow: none; 
     width: 200px;
     text-align: center;
     border-radius: 10px;
@@ -179,10 +178,10 @@ a.text, a.text2 {
 
 
 #sangomon .header2, #nigomon .header2 { grid-column: 1 / -1; grid-row: 1; }
-#sangomon .button-mon2, #nigomon .button-mon2 { grid-column: 1; grid-row: 2; } 
-#sangomon .button-mon1, #nigomon .button-mon1 { grid-column: 3; grid-row: 2; } 
+#sangomon .button-mon2, #nigomon .button-mon2 { grid-column: 1; grid-row: 2; }
+#sangomon .button-mon1, #nigomon .button-mon1 { grid-column: 3; grid-row: 2; }
 
-#sangomon .button-back, #nigomon .button-back { grid-column: 1; grid-row: 4; } 
+#sangomon .button-back, #nigomon .button-back { grid-column: 1; grid-row: 4; }
 #sangomon .button-start, #nigomon .button-start { grid-column: 3; grid-row: 4; } 
 
 #game .button-menu { 
@@ -194,16 +193,43 @@ a.text, a.text2 {
 
 
 @media (max-width: 768px) {
-  #sangomon .center-container, #nigomon .center-container, #selection .center-container {
+ 
+  #sangomon .center-container, 
+  #nigomon .center-container, 
+  #selection .center-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
+    gap: 30px; 
   }
   
-
+  
+  #selection .header2,
+  #selection .button-1,
+  #selection .button-2,
+  #selection .button-3,
   #selection .button-tsuika {
-      margin-top: 20px;
+      grid-column: auto;
+      grid-row: auto;
+      justify-self: auto;
+      align-self: auto;
+      margin: 0 auto; 
+  }
+
+  
+  #selection .button-tsuika {
+      margin-top: 10px;
+      
+      width: auto;
+      min-width: 150px;
+  }
+
+ 
+  #selection .button-3 {
+     
       align-self: center;
+      margin-top: 20px;
   }
 }
 
@@ -212,27 +238,7 @@ a.text, a.text2 {
 #home-page { background-image: url('bg_school_koutei.jpg'); }
 #sangomon, #nigomon { background-image: url('bg_school_room_back.jpg'); }
 #selection { background-image: url('bg_school_taiikukan.jpg'); }
-@media (max-width: 768px) {
-  #sangomon .center-container, #nigomon .center-container, #selection .center-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center; 
-  }
-  
-  
-  #selection .button-tsuika {
-      margin-top: 20px;
-      align-self: center; 
-  }
 
-  
-  #selection .button-3 {
-      align-self: center; 
-      justify-self: center;
-      margin-top: 20px; 
-  }
-}
 #home-page, #sangomon, #nigomon, #selection {
   background-size: cover;
   background-position: center;
