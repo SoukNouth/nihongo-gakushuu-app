@@ -1,0 +1,247 @@
+@charset "utf-8";
+
+
+
+@keyframes startpagetitle {
+  0%   { transform: translateY(-300px); opacity: 0; }
+  60%  { transform: translateY(25px); opacity: 1; }
+  80%  { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes startButtonanimation {
+  0%   { transform: scale(0) rotate(0deg); opacity: 0; }
+  60%  { transform: scale(1.2) rotate(370deg); opacity: 1; }
+  80%  { transform: scale(0.95) rotate(355deg); }
+  100% { transform: scale(1) rotate(360deg); opacity: 1; }
+}
+
+
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: "Rampart One", sans-serif;
+}
+
+
+.center-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+
+#home-page .center-container {
+  justify-content: space-between;
+  padding-top: 6vh;
+  padding-bottom: 33vh;
+}
+
+
+#selection .center-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto 1fr auto; 
+  min-height: 100vh;
+  padding: 5vh 10vw;
+  padding-bottom: 30px;
+  box-sizing: border-box;
+  gap: 20px;
+  align-items: center; 
+}
+
+#selection .header2 {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  justify-self: center;
+}
+
+
+#selection .button-1 {
+  grid-column: 1;
+  grid-row: 2;
+  justify-self: center;
+}
+
+
+#selection .button-2 {
+  grid-column: 3;
+  grid-row: 2;
+  justify-self: center;
+}
+
+
+#selection .button-3 {
+  grid-column: 2;
+  grid-row: 3;
+  justify-self: center;
+  align-self: end;
+}
+
+
+#selection .button-tsuika {
+  grid-column: 3;
+  grid-row: 3;
+  justify-self: end;
+  align-self: end;
+  margin-top: 0; 
+  width: auto;   
+  min-width: 150px;
+}
+
+#sangomon .center-container, #nigomon .center-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto auto 1fr auto; 
+  place-items: center;
+  gap: 15px;
+  padding: 5vh 5vw;
+}
+
+
+.header h1, .header2 h1 {
+  animation: startpagetitle 1s ease-out forwards;
+  margin: 0;
+  color: #FF9900;
+  -webkit-text-stroke: 2px #C85A00;
+  text-shadow: 3px 3px 0 #FFF;
+  font-weight: bold;
+  text-align: center;
+  font-size: clamp(2.5rem, 9vw, 10rem);
+  white-space: nowrap;
+}
+
+
+.box, .box2 {
+  opacity: 0;
+  animation: startButtonanimation 1.2s ease-out 0.5s forwards;
+  transition: transform 0.3s ease-in-out;
+  padding: clamp(15px, 3vh, 25px) clamp(30px, 5vw, 50px);
+  border-radius: 25px;
+  text-align: center;
+}
+
+
+.box {
+  background-color: #4A90E2;
+  border: 5px solid #004AAD;
+  box-shadow: 0 0 0 5px #004AAD, -3px -3px 0 8px #000, 3px 3px 0 8px #000;
+}
+
+
+.box2 {
+  background-color: #ff6464;
+  border: 5px solid #ff0000;
+  box-shadow: 0 0 0 5px #f44242, -3px -3px 0 8px #000, 3px 3px 0 8px #000;
+}
+
+
+.box:hover, .box2:hover {
+  transform: scale(1.1);
+}
+
+
+a.text, a.text2 {
+  display: inline-block;
+  color: black;
+  text-decoration: none;
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: bold;
+  transition: all 0.3s ease-out;
+}
+
+
+.box:hover a, .box2:hover a {
+  color: white;
+  text-shadow: 2px 2px 0 black, -2px -2px 0 black, -2px 2px 0 black, 2px -2px 0 black;
+}
+
+
+.button-tsuika {
+    background-color: #95a5a6; 
+    border: 2px dashed #7f8c8d;
+    box-shadow: none; 
+    width: 200px;
+    text-align: center;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.button-tsuika a.text {
+    font-size: 1.5rem; 
+}
+
+
+#sangomon .header2, #nigomon .header2 { grid-column: 1 / -1; grid-row: 1; }
+#sangomon .button-mon2, #nigomon .button-mon2 { grid-column: 1; grid-row: 2; }
+#sangomon .button-mon1, #nigomon .button-mon1 { grid-column: 3; grid-row: 2; }
+
+#sangomon .button-back, #nigomon .button-back { grid-column: 1; grid-row: 4; }
+#sangomon .button-start, #nigomon .button-start { grid-column: 3; grid-row: 4; } 
+
+#game .button-menu { 
+  position: fixed;
+  bottom: 30px;
+  right: 30px; 
+}
+
+
+
+@media (max-width: 768px) {
+ 
+  #sangomon .center-container, 
+  #nigomon .center-container, 
+  #selection .center-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px; 
+  }
+  
+  
+  #selection .header2,
+  #selection .button-1,
+  #selection .button-2,
+  #selection .button-3,
+  #selection .button-tsuika {
+      grid-column: auto;
+      grid-row: auto;
+      justify-self: auto;
+      align-self: auto;
+      margin: 0 auto; 
+  }
+
+  
+  #selection .button-tsuika {
+      margin-top: 10px;
+      
+      width: auto;
+      min-width: 150px;
+  }
+
+ 
+  #selection .button-3 {
+     
+      align-self: center;
+      margin-top: 20px;
+  }
+}
+
+
+
+#home-page { background-image: url('bg_school_koutei.jpg'); }
+#sangomon, #nigomon { background-image: url('bg_school_room_back.jpg'); }
+#selection { background-image: url('bg_school_taiikukan.jpg'); }
+
+#home-page, #sangomon, #nigomon, #selection {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}

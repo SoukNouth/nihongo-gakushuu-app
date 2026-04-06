@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>問題追加 </title>
+    <link rel="stylesheet" href="sanitize.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        
+        body { background-color: #00fff7; padding: 20px; }
+        .admin-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgb(255, 255, 255);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; margin-bottom: 20px; font-size: 24px; }
+        .form-group {display: block; font-weight: bold; margin-bottom: 5px; color: #000000; margin-bottom: 20px; text-align: left; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #0da9fc; }
+        input[type="text"], select, input[type="file"] {
+            width: 100%; padding: 10px; border: 1px solid #000000; border-radius: 5px; font-size: 16px;
+        }
+        button.save-btn {
+            background-color: #308fa4; 
+            color: white; border: none; padding: 15px; width: 100%;
+            font-size: 18px; border-radius: 8px; cursor: pointer; font-weight: bold;
+            transition: background 0.3s;
+        }
+        button.save-btn:hover { background-color: #3ce5ff; }
+        button.save-btn:disabled { background-color: #ccc; cursor: not-allowed; }
+        
+        .back-link { display: block; font-weight: bold; margin-bottom: 5px; color: #0da9fc; }
+        
+       
+        #status { margin-top: 15px; font-weight: bold; padding: 10px; border-radius: 5px; display: none;}
+        .connection-box { background: #e8f5e9; color: #377387; padding: 10px; margin-bottom: 20px; border-radius: 5px; font-size: 0.9em; text-align: center;}
+
+        
+        .recent-section { margin-top: 40px; border-top: 2px solid #ffffff; padding-top: 20px; }
+        .recent-title { font-size: 1.2em; color: #333; margin-bottom: 15px; font-weight: bold; }
+        .question-item { 
+            display: flex; align-items: center; background: #f2f2f2; 
+            border: 1px solid #fa0000; padding: 10px; margin-bottom: 10px; border-radius: 8px; 
+        }
+        .question-thumb { 
+            width: 60px; height: 60px; object-fit: cover; border-radius: 5px; 
+            margin-right: 15px; border: 1px solid #cd3636; background: #eee;
+        }
+        
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: auto; 
+            font-size: 0.8rem;
+        }
+        .delete-btn:hover { background-color: #c0392b;}
+       
+        
+        
+    </style>
+</head>
+<body>
+
+<div class="admin-container">
+    <h1>📝 問題追加</h1>
+    <div id="connection-status" class="connection-box">データベースに接続中</div>
+
+    <div class="form-group">
+        <label>1. カテゴリー</label>
+        <select id="category">
+            <option value="2">2語文 (例: あおいくるま)</option>
+            <option value="3">3語文 (例: こどもがぱんをたべる)</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>2. せいかいの文 (ひらがな)</label>
+        <input type="text" id="sentence" placeholder="例: あおいくるま">
+    </div>
+
+    <div class="form-group">
+        <label>3. なぞる文字 (1文字)</label>
+        <input type="text" id="traceChar" placeholder="例: い">
+    </div>
+
+    <div class="form-group">
+        <label>4. イラスト画像</label>
+        <input type="file" id="imageFile" accept="image/*">
+        <small>※自動的に圧縮してデータベースに保存されます</small>
+    </div>
+
+    <button id="uploadBtn" class="save-btn">保存する</button>
+    <p id="status"></p>
+
+
+    <div class="recent-section">
+        <div class="recent-title">📸 最近追加された問題</div>
+        <div id="questionsList">
+            <p style="color:#777; font-size:0.9em;">読み込み中... </p>
+        </div>
+    </div>
+
+    <a href="index.html" class="back-link">← ゲームに戻る</a>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+   
+    import { getFirestore, collection, addDoc, getDocs, limit, query, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    
+    const firebaseConfig = {
+        apiKey: "AIzaSyAVvYZLRnhXw0r_L9qsWYKu2kQZmOyJSLs",
+        authDomain: "nihongo-naraimashou.firebaseapp.com",
+        projectId: "nihongo-naraimashou",
+        storageBucket: "nihongo-naraimashou.appspot.com",
+        messagingSenderId: "555772220708",
+        appId: "1:555772220708:web:230347906896dd49390fb1"
+    };
+
+    const statusBox = document.getElementById('connection-status');
+    let db;
+
+    try {
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        testConnection();
+    } catch(e) {
+        showStatus("Config Error: " + e.message, "red");
+    }
+
+    async function testConnection() {
+        try {
+          
+            await loadRecentQuestions();
+            statusBox.textContent = "✅ データベースに接続した";
+        } catch (e) {
+            console.error(e);
+            statusBox.textContent = "❌ 接続エラー " + e.message;
+            statusBox.style.background = "#ffebee";
+            statusBox.style.color = "#c62828";
+        }
+    }
+
+
+    const resizeImage = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800; 
+                    const scaleSize = MAX_WIDTH / img.width;
+                    const width = (img.width > MAX_WIDTH) ? MAX_WIDTH : img.width;
+                    const height = (img.width > MAX_WIDTH) ? (img.height * scaleSize) : img.height;
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    resolve(canvas.toDataURL('image/jpeg', 0.7)); 
+                };
+                img.onerror = (error) => reject(error);
+            };
+        });
+    };
+
+    
+    async function loadRecentQuestions() {
+        const listContainer = document.getElementById('questionsList');
+        try {
+            
+            const querySnapshot = await getDocs(collection(db, "questions"));
+            let questions = [];
+            
+            querySnapshot.forEach((doc) => {
+                questions.push({ id: doc.id, ...doc.data() });
+            });
+
+           
+            questions.sort((a, b) => {
+                const dateA = a.createdAt?.seconds || 0;
+                const dateB = b.createdAt?.seconds || 0;
+                return dateB - dateA; 
+            });
+
+          
+            const recent = questions.slice(0, 5);
+
+            if (recent.length === 0) {
+                listContainer.innerHTML = "<p>まだ問題がありません </p>";
+                return;
+            }
+
+            let html = "";
+            recent.forEach(q => {
+              
+                const tracePart = q.parts ? q.parts.find(p => p.type === 'trace') : null;
+                const traceChar = tracePart ? tracePart.text : '?';
+                const fullText = q.parts ? q.parts.map(p => p.text).join('') : 'Unknown';
+                
+                html += `
+                    <div class="question-item">
+                        <img src="${q.image}" class="question-thumb" alt="Question Image">
+                        <div>
+                            <div style="font-weight: bold; font-size: 1.1em;">${fullText}</div>
+                            <div style="font-size: 0.85em; color: #666;">
+                                カテゴリー: ${q.category}語文 | なぞり: 「${traceChar}」
+                            </div>
+                        </div>
+                        <button class="delete-btn" data-id="${q.id}">削除 </button>
+                    </div>
+                `;
+            });
+            listContainer.innerHTML = html;
+
+           
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = e.target.getAttribute('data-id');
+                    if(confirm("本当にこの問題を削除しますか？ (Delete this question?)")) {
+                        await deleteQuestion(id);
+                    }
+                });
+            });
+
+        } catch (e) {
+            console.error("List Load Error:", e);
+            listContainer.innerHTML = "<p style='color:red'>読み込みエラー </p>";
+        }
+    }
+
+   
+    async function deleteQuestion(id) {
+        try {
+            await deleteDoc(doc(db, "questions", id));
+            showStatus("削除しました ", "orange");
+            loadRecentQuestions(); 
+        } catch (e) {
+            console.error("Delete Error:", e);
+            showStatus("削除エラー: " + e.message, "red");
+        }
+    }
+
+   
+    document.getElementById('uploadBtn').addEventListener('click', async () => {
+        const btn = document.getElementById('uploadBtn');
+        const category = parseInt(document.getElementById('category').value);
+        const sentence = document.getElementById('sentence').value.trim();
+        const traceChar = document.getElementById('traceChar').value.trim();
+        const file = document.getElementById('imageFile').files[0];
+
+        if (!sentence || !traceChar || !file) {
+            alert("すべて入力してください！");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "処理中... (Processing)";
+        showStatus("画像を圧縮中... (Compressing Image)", "blue");
+
+        try {
+            const base64Image = await resizeImage(file);
+            
+            const letters = sentence.split('');
+            const parts = letters.map(char => {
+                return (char === traceChar) ? { type: 'trace', text: char } : { type: 'select', text: char };
+            });
+
+            showStatus("データベースに保存中... ", "blue");
+            
+            await addDoc(collection(db, "questions"), {
+                category: category,
+                image: base64Image,
+                parts: parts,
+                createdAt: new Date()
+            });
+
+            showStatus("✅ 保存しました！ ", "green");
+            
+            
+            await loadRecentQuestions();
+            
+           
+            document.getElementById('sentence').value = "";
+            document.getElementById('traceChar').value = "";
+            document.getElementById('imageFile').value = "";
+            
+        } catch (error) {
+            console.error("Error:", error);
+            showStatus("❌ エラー: " + error.message, "red");
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "保存する ";
+        }
+    });
+
+    function showStatus(msg, color) {
+        const el = document.getElementById('status');
+        el.style.display = 'block';
+        el.textContent = msg;
+        el.style.color = color;
+    }
+</script>
+
+</body>
+</html>
