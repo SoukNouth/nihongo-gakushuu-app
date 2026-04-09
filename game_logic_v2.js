@@ -753,7 +753,7 @@ document.getElementById('done-btn').onclick = () => {
     wrongSound.currentTime = 0;
     wrongSound.play();
     mistakeMade = true; 
-    alert("ラインの中でなぞれ");
+    alert("ラインの中でなぞってください");
   }
 };
 
