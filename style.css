@@ -21,7 +21,7 @@
 html, body {
   height: 100%;
   margin: 0;
-  font-family: "Rampart One", sans-serif;
+  font-family: "M PLUS Rounded 1c", "Rampart One", sans-serif;
 }
 
 
@@ -107,10 +107,19 @@ html, body {
 .header h1, .header2 h1 {
   animation: startpagetitle 1s ease-out forwards;
   margin: 0;
-  color: #FF9900;
-  -webkit-text-stroke: 2px #C85A00;
-  text-shadow: 3px 3px 0 #FFF;
-  font-weight: bold;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  font-weight: 200;
+  color: #0099ff;
+  -webkit-text-stroke: 0;
+  text-shadow:
+    5px 3px 5px #fff,
+    -5px -3px 5px #fff,
+    5px -3px 5px #fff,
+    -5px  3px 5px #fff,
+    0px  5px 5px #fff,
+    0px -5px 5px #fff,
+    5px  0px 5px #fff,
+    -5px 0px 5px #fff;
   text-align: center;
   font-size: clamp(2.5rem, 9vw, 10rem);
   white-space: nowrap;
@@ -118,9 +127,9 @@ html, body {
 
 
 .box, .box2 {
-  opacity: 0;
-  animation: startButtonanimation 1.2s ease-out 0.5s forwards;
-  transition: transform 0.3s ease-in-out;
+  opacity: 1;
+  animation: startButtonanimation 1.2s ease-out 0.5s backwards;
+  transition: transform 0.25s ease-out;
   padding: clamp(15px, 3vh, 25px) clamp(30px, 5vw, 50px);
   border-radius: 25px;
   text-align: center;
@@ -128,9 +137,11 @@ html, body {
 
 
 .box {
-  background-color: #4A90E2;
-  border: 5px solid #004AAD;
-  box-shadow: 0 0 0 5px #004AAD, -3px -3px 0 8px #000, 3px 3px 0 8px #000;
+  background-color: #4fc3f7;
+  border: 4px solid #000;
+  box-shadow: 0 8px 0 #0277bd, 0 10px 10px rgba(0,0,0,0.3);
+  border-radius: 50px;
+  padding: clamp(18px, 4vh, 32px) clamp(40px, 8vw, 80px);
 }
 
 
@@ -141,17 +152,19 @@ html, body {
 }
 
 
-.box:hover, .box2:hover {
-  transform: scale(1.1);
+.box:hover, .box2:hover,
+.box:active, .box2:active {
+  transform: scale(1.12);
 }
 
 
 a.text, a.text2 {
   display: inline-block;
-  color: black;
+  color: white;
   text-decoration: none;
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-size: clamp(1.8rem, 5vw, 3rem);
   font-weight: bold;
+  text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
   transition: all 0.3s ease-out;
 }
 
@@ -235,11 +248,16 @@ a.text, a.text2 {
 
 
 
-#home-page { background-image: url('bg_school_koutei.jpg'); }
+#home-page {
+  background-image: url('gakkoubackground.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 #sangomon, #nigomon { background-image: url('bg_school_room_back.jpg'); }
 #selection { background-image: url('bg_school_taiikukan.jpg'); }
 
-#home-page, #sangomon, #nigomon, #selection {
+#sangomon, #nigomon, #selection {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

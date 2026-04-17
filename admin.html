@@ -6,64 +6,175 @@
     <title>問題追加 </title>
     <link rel="stylesheet" href="sanitize.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        
-        body { background-color: #00fff7; padding: 20px; }
-        .admin-container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: rgb(255, 255, 255);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        h1 { color: #333; margin-bottom: 20px; font-size: 24px; }
-        .form-group {display: block; font-weight: bold; margin-bottom: 5px; color: #000000; margin-bottom: 20px; text-align: left; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; color: #0da9fc; }
-        input[type="text"], select, input[type="file"] {
-            width: 100%; padding: 10px; border: 1px solid #000000; border-radius: 5px; font-size: 16px;
-        }
-        button.save-btn {
-            background-color: #308fa4; 
-            color: white; border: none; padding: 15px; width: 100%;
-            font-size: 18px; border-radius: 8px; cursor: pointer; font-weight: bold;
-            transition: background 0.3s;
-        }
-        button.save-btn:hover { background-color: #3ce5ff; }
-        button.save-btn:disabled { background-color: #ccc; cursor: not-allowed; }
-        
-        .back-link { display: block; font-weight: bold; margin-bottom: 5px; color: #0da9fc; }
-        
-       
-        #status { margin-top: 15px; font-weight: bold; padding: 10px; border-radius: 5px; display: none;}
-        .connection-box { background: #e8f5e9; color: #377387; padding: 10px; margin-bottom: 20px; border-radius: 5px; font-size: 0.9em; text-align: center;}
+        * { box-sizing: border-box; }
 
-        
-        .recent-section { margin-top: 40px; border-top: 2px solid #ffffff; padding-top: 20px; }
-        .recent-title { font-size: 1.2em; color: #333; margin-bottom: 15px; font-weight: bold; }
-        .question-item { 
-            display: flex; align-items: center; background: #f2f2f2; 
-            border: 1px solid #fa0000; padding: 10px; margin-bottom: 10px; border-radius: 8px; 
+        body {
+            font-family: "M PLUS Rounded 1c", sans-serif;
+            background: linear-gradient(135deg, #c9e8ff 0%, #fde8d8 60%, #d4f5c4 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+            margin: 0;
         }
-        .question-thumb { 
-            width: 60px; height: 60px; object-fit: cover; border-radius: 5px; 
-            margin-right: 15px; border: 1px solid #cd3636; background: #eee;
+
+        .admin-container {
+            max-width: 580px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 32px 28px;
+            border-radius: 24px;
+            border: 3px solid #000;
+            box-shadow: 0 8px 0 #aaa, 0 10px 20px rgba(0,0,0,0.15);
         }
-        
-        .delete-btn {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
+
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: #222;
+            margin: 0 0 20px 0;
+        }
+
+        .connection-box {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px 14px;
+            margin-bottom: 24px;
+            border-radius: 10px;
+            border: 2px solid #a5d6a7;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .form-group { margin-bottom: 20px; }
+
+        label {
+            display: block;
+            font-weight: 900;
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #bbb;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: "M PLUS Rounded 1c", sans-serif;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+        input[type="text"]:focus, select:focus { border-color: #4fc3f7; }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed #bbb;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-family: "M PLUS Rounded 1c", sans-serif;
+            background: #fafafa;
             cursor: pointer;
-            margin-left: auto; 
-            font-size: 0.8rem;
         }
-        .delete-btn:hover { background-color: #c0392b;}
-       
-        
-        
+
+        small { display: block; margin-top: 6px; color: #888; font-size: 0.8rem; }
+
+        button.save-btn {
+            background-color: #4fc3f7;
+            color: white;
+            border: 3px solid #000;
+            padding: 14px;
+            width: 100%;
+            font-size: 1.2rem;
+            font-family: "M PLUS Rounded 1c", sans-serif;
+            font-weight: 900;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #0277bd, 0 8px 10px rgba(0,0,0,0.2);
+            text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+            transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+            margin-top: 4px;
+        }
+        button.save-btn:hover { transform: scale(1.03); }
+        button.save-btn:active { transform: translateY(5px); box-shadow: 0 1px 0 #0277bd; }
+        button.save-btn:disabled { background-color: #ccc; box-shadow: none; cursor: not-allowed; transform: none; }
+
+        #status {
+            margin-top: 14px;
+            font-weight: 700;
+            padding: 10px 14px;
+            border-radius: 10px;
+            display: none;
+            text-align: center;
+            background: #f5f5f5;
+        }
+
+        .recent-section { margin-top: 36px; border-top: 2px solid #eee; padding-top: 24px; }
+
+        .recent-title {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: #222;
+            margin-bottom: 14px;
+        }
+
+        .question-item {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            border-radius: 14px;
+            gap: 12px;
+            transition: border-color 0.2s;
+        }
+        .question-item:hover { border-color: #4fc3f7; }
+
+        .question-thumb {
+            width: 56px;
+            height: 56px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            flex-shrink: 0;
+        }
+
+        .question-item > div { flex: 1; }
+        .question-item .q-title { font-weight: 900; font-size: 1.05rem; color: #222; }
+        .question-item .q-sub { font-size: 0.82rem; color: #888; margin-top: 2px; }
+
+        .delete-btn {
+            background-color: #ff6b6b;
+            color: white;
+            border: 2px solid #000;
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: "M PLUS Rounded 1c", sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            box-shadow: 0 3px 0 #c0392b;
+            transition: transform 0.1s;
+            flex-shrink: 0;
+        }
+        .delete-btn:hover { transform: scale(1.05); }
+        .delete-btn:active { transform: translateY(2px); box-shadow: none; }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 24px;
+            color: #4fc3f7;
+            font-weight: 900;
+            font-size: 1rem;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -214,12 +325,10 @@
                     <div class="question-item">
                         <img src="${q.image}" class="question-thumb" alt="Question Image">
                         <div>
-                            <div style="font-weight: bold; font-size: 1.1em;">${fullText}</div>
-                            <div style="font-size: 0.85em; color: #666;">
-                                カテゴリー: ${q.category}語文 | なぞり: 「${traceChar}」
-                            </div>
+                            <div class="q-title">${fullText}</div>
+                            <div class="q-sub">カテゴリー: ${q.category}語文 | なぞり: 「${traceChar}」</div>
                         </div>
-                        <button class="delete-btn" data-id="${q.id}">削除 </button>
+                        <button class="delete-btn" data-id="${q.id}">削除</button>
                     </div>
                 `;
             });

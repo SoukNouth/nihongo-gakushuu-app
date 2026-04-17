@@ -309,12 +309,15 @@ const gridContainer = document.getElementById('hiragana-container');
 const tracingModal = document.getElementById('tracing-modal');
 
 
-hiragana.forEach(char => {
+hiragana.forEach((char, i) => {
     const button = document.createElement('button');
     button.textContent = char;
+    button.classList.add(Math.floor(i / 5) % 2 === 0 ? 'row-dark' : 'row-light');
+    button.classList.add('btn-fall-in');
+    button.style.animationDelay = `${(Math.floor(i / 5) * 0.1).toFixed(2)}s`;
     if (char !== '　') {
         button.addEventListener('click', () => {
-            checkAnswer(char); 
+            checkAnswer(char);
         });
     }
     gridContainer.appendChild(button);
@@ -369,37 +372,48 @@ function loadQuestion(index) {
     const imageElement = document.getElementById('question-image');
     
     
-    imageElement.src = question.image;
-    
+    imageElement.classList.remove('img-fall-in');
+    imageElement.removeAttribute('src');
+    imageElement.style.opacity = '0';
+    setTimeout(() => { imageElement.src = question.image; }, 10);
+
     imageElement.onerror = function() {
-     
-        this.src = 'https://placehold.co/300x200?text=No+Image'; 
+        this.src = 'https://placehold.co/300x200?text=No+Image';
     };
 
     imageElement.onload = function() {
+        imageElement.style.opacity = '1';
+        void imageElement.offsetWidth;
+        imageElement.classList.add('img-fall-in');
         if (typeof resizeCanvas === 'function') {
             resizeCanvas();
         }
     };
     
     const slotContainer = document.getElementById('answer-slots-container');
-    slotContainer.innerHTML= '';
+    slotContainer.innerHTML = '';
+    slotContainer.classList.remove('loaded');
 
-    question.parts.forEach((part, partIndex) => { 
-        const letters = part.text.split(''); 
-        
+    let slotIndex = 0;
+    question.parts.forEach((part, partIndex) => {
+        const letters = part.text.split('');
+
         letters.forEach(char => {
             const slot = document.createElement('div');
-            slot.classList.add('answer-slot');
+            slot.classList.add('answer-slot', 'slot-enter');
+            slot.style.animationDelay = `${slotIndex * 0.07}s`;
             slotContainer.appendChild(slot);
+            slotIndex++;
         });
 
         if (partIndex < question.parts.length - 1) {
             const space = document.createElement('div');
-            space.classList.add('spacer'); 
-            slotContainer.appendChild(space); 
+            space.classList.add('spacer');
+            slotContainer.appendChild(space);
         }
     });
+
+    requestAnimationFrame(() => slotContainer.classList.add('loaded'));
 }
 
 
@@ -424,6 +438,9 @@ function checkAnswer(clickedChar) {
         const slots = document.querySelectorAll(".answer-slot");
         const nowSlot = slots[currentSlotIndex];
         nowSlot.textContent = clickedChar;
+        nowSlot.classList.remove('slot-filled', 'slot-enter');
+        void nowSlot.offsetWidth;
+        nowSlot.classList.add('slot-filled');
 
         currentSlotIndex++;
         currentLetterIndex++;
@@ -458,38 +475,37 @@ function showResultScreen() {
     overlay.id = 'result-modal';
 
     const content = document.createElement('div');
-    content.className = 'modal-content';
-   
+    content.className = 'modal-content result-content';
+
     const title = document.createElement('h2');
-    title.textContent = "おめでとう！"; 
-    
-    const scoreText = document.createElement('h1');
+    title.textContent = "おめでとう！";
+
+    const stars = document.createElement('div');
+    stars.className = 'result-stars';
+    stars.textContent = "⭐⭐⭐";
+
+    const scoreText = document.createElement('div');
+    scoreText.className = 'result-score';
     scoreText.textContent = `${score} / ${activeQuestions.length}`;
-    scoreText.style.fontSize = "4em";
-    scoreText.style.margin = "20px 0";
-    scoreText.style.color = "#2ecc71"; 
-    
+
     const controls = document.createElement('div');
     controls.className = 'modal-controls';
-    
+
     const againBtn = document.createElement('button');
-    againBtn.className = 'control-btn';
-    againBtn.textContent = "もういちど"; 
-    againBtn.style.background = "#3498db"; 
-    againBtn.onclick = () => location.reload(); 
-    
+    againBtn.className = 'modal-close-button result-btn-blue';
+    againBtn.textContent = "もういちど";
+    againBtn.onclick = () => location.reload();
+
     const backBtn = document.createElement('button');
-    backBtn.className = 'control-btn';
-    backBtn.textContent = "もどる"; 
-    backBtn.style.background = "#e74c3c"; 
-    backBtn.onclick = () => {
-        window.location.href = "page2.html"; 
-    };
-    
+    backBtn.className = 'modal-close-button result-btn-red';
+    backBtn.textContent = "もどる";
+    backBtn.onclick = () => { window.location.href = "page2.html"; };
+
     controls.appendChild(againBtn);
     controls.appendChild(backBtn);
-    
+
     content.appendChild(title);
+    content.appendChild(stars);
     content.appendChild(scoreText);
     content.appendChild(controls);
     overlay.appendChild(content);
@@ -723,7 +739,10 @@ function acceptTracingAnswer() {
     const slots = document.querySelectorAll(".answer-slot");
     const nowSlot = slots[currentSlotIndex];
     nowSlot.textContent = char;
-    
+    nowSlot.classList.remove('slot-filled', 'slot-enter');
+    void nowSlot.offsetWidth;
+    nowSlot.classList.add('slot-filled');
+
     currentSlotIndex++;
     currentPartIndex++;
     currentLetterIndex = 0;
