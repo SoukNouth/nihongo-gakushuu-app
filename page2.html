@@ -86,13 +86,13 @@
             const btn = document.getElementById('scoring-toggle-btn');
             const isOn = localStorage.getItem('scoringEnabled') !== 'false';
             localStorage.setItem('scoringEnabled', isOn ? 'false' : 'true');
-            btn.textContent = isOn ? 'オフ' : 'オン';
+            btn.textContent = isOn ? '先生' : '自動';
             btn.classList.toggle('toggle-off', isOn);
         }
         (function init() {
             const isOn = localStorage.getItem('scoringEnabled') !== 'false';
             const btn = document.getElementById('scoring-toggle-btn');
-            btn.textContent = isOn ? 'オン' : 'オフ';
+            btn.textContent = isOn ? '自動' : '先生';
             btn.classList.toggle('toggle-off', !isOn);
         })();
     </script>
