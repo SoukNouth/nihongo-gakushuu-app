@@ -17,7 +17,7 @@
 <header class="game-header">
        
         <button id="open-menu-btn" class="menu-button-header">メニュー</button>
-        
+        <div id="student-name-display" class="student-name-header"></div>
         <div id="question-counter" class="question-counter"></div>
     </header>
 
@@ -45,7 +45,14 @@
             </div>
         </div>
 
-        <div id="hiragana-container" class="hiragana-grid-container"></div>
+        <!-- ④ キーボードエリア（下部に固定） -->
+        <div class="keyboard-area">
+            <div class="keyboard-header">
+                <button id="keyboard-toggle-btn" class="keyboard-toggle">がざだ…</button>
+            </div>
+            <div id="hiragana-container" class="hiragana-grid-container"></div>
+            <div id="hiragana-dakuten-container" class="hiragana-grid-container hidden"></div>
+        </div>
 
     </main>
 
@@ -64,6 +71,11 @@
                 <button id="undo-btn">もどる</button>
                 <button id="clear-btn">けす</button>
                 <button id="done-btn">できた</button>
+            </div>
+            <!-- ① 先生の手動採点ボタン（採点オフ時に表示） -->
+            <div id="teacher-judge" class="teacher-judge hidden">
+                <button id="judge-correct">○ せいかい</button>
+                <button id="judge-wrong">× もういちど</button>
             </div>
             <h2>なぞってみよう！</h2>
        

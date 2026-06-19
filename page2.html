@@ -13,13 +13,89 @@
 <body id="selection">
     <main class="center-container">
         <div class="header2"><h1>ゲーム</h1></div>
-       <div class="box button-1"> <a class="text" href="nigomon.html">２ごぶん</a></div>
-        <div class="box button-2"> <a class="text" href="sangomon.html">３ごぶん</a></div>
-        <div class="box2 button-3"> <a class="text2" href="index.html">もどる</a></div>
+       <div class="box button-1"> <a class="text" id="link-nigomon" href="nigomon.html">２ごぶん</a></div>
+        <div class="box button-2"> <a class="text" id="link-sangomon" href="sangomon.html">３ごぶん</a></div>
+        <div class="box2 button-3"> <a class="text2" id="link-back" href="students.html">もどる</a></div>
         <div class="box button-tsuika"> <a class="text" href="admin.html">追加</a> </div>
-        
-        
+        <script>
+        (function() {
+            const sid = new URLSearchParams(window.location.search).get('student');
+            if (sid) {
+                document.getElementById('link-nigomon').href = 'nigomon.html?student=' + sid;
+                document.getElementById('link-sangomon').href = 'sangomon.html?student=' + sid;
+            }
+        })();
+        </script>
+
+        <!-- ① 採点モード トグル -->
+        <div class="scoring-toggle" id="scoring-toggle-container">
+            <div class="scoring-label">採点</div>
+            <button id="scoring-toggle-btn" onclick="toggleScoring()">オン</button>
+        </div>
+
     </main>
+
+    <style>
+        .scoring-toggle {
+            grid-column: 1;
+            grid-row: 3;
+            justify-self: start;
+            align-self: end;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .scoring-label {
+            font-family: "M PLUS Rounded 1c", sans-serif;
+            font-weight: 900;
+            font-size: 1rem;
+            color: #fff;
+            text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+        }
+        #scoring-toggle-btn {
+            font-family: "M PLUS Rounded 1c", sans-serif;
+            font-weight: 900;
+            font-size: 1.1rem;
+            padding: 8px 24px;
+            border-radius: 50px;
+            border: 3px solid #000;
+            background: #69f0ae;
+            color: #fff;
+            cursor: pointer;
+            text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+            box-shadow: 0 5px 0 #00897b;
+            transition: transform 0.12s ease-out;
+        }
+        #scoring-toggle-btn.toggle-off {
+            background: #bdbdbd;
+            box-shadow: 0 5px 0 #757575;
+        }
+        #scoring-toggle-btn:active { transform: translateY(4px); box-shadow: none !important; }
+        @media (max-width: 768px) {
+            .scoring-toggle {
+                grid-column: auto;
+                grid-row: auto;
+                justify-self: auto;
+                align-self: auto;
+            }
+        }
+    </style>
+    <script>
+        function toggleScoring() {
+            const btn = document.getElementById('scoring-toggle-btn');
+            const isOn = localStorage.getItem('scoringEnabled') !== 'false';
+            localStorage.setItem('scoringEnabled', isOn ? 'false' : 'true');
+            btn.textContent = isOn ? 'オフ' : 'オン';
+            btn.classList.toggle('toggle-off', isOn);
+        }
+        (function init() {
+            const isOn = localStorage.getItem('scoringEnabled') !== 'false';
+            const btn = document.getElementById('scoring-toggle-btn');
+            btn.textContent = isOn ? 'オン' : 'オフ';
+            btn.classList.toggle('toggle-off', !isOn);
+        })();
+    </script>
 
     
 </body>

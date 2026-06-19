@@ -1,7 +1,8 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { localQuestions } from './local_questions.js';
 
 
 const firebaseConfig = {
@@ -22,21 +23,27 @@ const auth = getAuth(app);
 const correctSound = new Audio('tadashii.mp3');
 const wrongSound = new Audio('machigai.mp3');
 
+// ① 採点モード: localStorage から読み込む（デフォルト: オン）
+const scoringEnabled = localStorage.getItem('scoringEnabled') !== 'false';
+
 let isTracingMode = false;
+let isPreTraceSelectMode = false; // ③ なぞる前に文字を選ぶ
 let currentQuestionIndex = 0;
 let currentPartIndex = 0;
 let currentLetterIndex = 0;
 let currentSlotIndex = 0;
-let currentTracingLetter = ''; 
-let strokes = []; 
-let activeQuestions = []; 
+let currentTracingLetter = '';
+let strokes = [];
+let activeQuestions = [];
 let score = 0;
-let mistakeMade = false; 
+let mistakeMade = false;
+let currentStudentId = null;
+let currentCategory = 2;
 
 const tracingRules = {
-  'い': 2, 
+  'い': 2,
   'の': 1,
-  'を': 3, 
+  'を': 3,
   'が': 5,
   'は': 3,
   'に': 3,
@@ -44,285 +51,67 @@ const tracingRules = {
 };
 
 
-const problemDatabase = [
-    {   
-        category : 2,
-        image: 'image/kuruma-green.png',
-        parts: [
-            { type: 'select', text: 'み' },
-            { type: 'select', text: 'ど' },
-            { type: 'select', text: 'り' },
-            { type: 'trace',  text: 'の' },
-            { type: 'select', text: 'く' },
-            { type: 'select', text: 'る' },
-            { type: 'select', text: 'ま' }
-        ],
-    },
-    {   category : 2,
-        image: 'image/kuruma-blue.png',
-        parts: [
-            { type: 'select', text: 'あ' },
-            { type: 'select', text: 'お' },
-            { type: 'trace',  text: 'い' },
-            { type: 'select', text: 'く' },
-            { type: 'select', text: 'る' },
-            { type: 'select', text: 'ま' }
-        ],
-    },
-    {   category : 2,
-        image: 'image/kuruma-red.png',
-        parts: [
-            { type: 'select', text: 'あ' },
-            { type: 'select', text: 'か' },
-            { type: 'trace',  text: 'い' },
-            { type: 'select', text: 'く' },
-            { type: 'select', text: 'る' },
-            { type: 'select', text: 'ま' }
-        ],
-    },
-    {   category : 2,
-        image: 'image/kuruma-white.png',
-        parts: [
-            { type: 'select', text: 'し' },
-            { type: 'select', text: 'ろ' },
-            { type: 'trace',  text: 'い' },
-            { type: 'select', text: 'く' },
-            { type: 'select', text: 'る' },
-            { type: 'select', text: 'ま' }
-        ],
-    },
-    {   category : 2,
-        image: 'image/kuruma-black.png',
-        parts: [
-            { type: 'select', text: 'く' },
-            { type: 'select', text: 'ろ' },
-            { type: 'trace',  text: 'い' },
-            { type: 'select', text: 'く' },
-            { type: 'select', text: 'る' },
-            { type: 'select', text: 'ま' }
-        ],
-    },
-    {   category : 2,
-        image: 'image/ie-yellow.png',
-        parts: [
-            { type: 'select', text: 'き' },
-            { type: 'select', text: 'い' },
-            { type: 'select', text: 'ろ' },
-            { type: 'trace',  text: 'い' },
-            { type: 'select', text: 'い' },
-            { type: 'select', text: 'え' }
-        ]
-    },
-    {   category : 2,
-        image: 'image/ie-red.png',
-        parts: [
-            { type: 'select', text: 'あ' },
-            { type: 'select', text: 'か' },
-            { type: 'trace',  text: 'い' },
-            { type: 'select', text: 'い' },
-            { type: 'select', text: 'え' }
-        ]
-    },
-    {   category : 2,
-        image: 'image/ie-blue.png',
-        parts: [
-            { type: 'select', text: 'あ' },
-            { type: 'select', text: 'お' },
-            { type: 'trace',  text: 'い' },
-            { type: 'select', text: 'い' },
-            { type: 'select', text: 'え' }
-        ]
-    },
+const problemDatabase = localQuestions;
 
-    {   category : 2,
-        image: 'image/ie-green.png',
-        parts: [
-            { type: 'select', text: 'み' },
-            { type: 'select', text: 'ど' },
-            { type: 'select', text: 'り' },
-            { type: 'trace',  text: 'の' },
-            { type: 'select', text: 'い' },
-            { type: 'select', text: 'え' }
-        ]
-    },
 
-    {   category : 2,
-        image: 'image/fuku-blue.png',
-        parts: [
-            { type: 'select', text: 'あ' },
-            { type: 'select', text: 'お' },
-            { type: 'trace',  text: 'い' },
-            { type: 'select', text: 'ふ' },
-            { type: 'select', text: 'く' }
-        ]
-    },
-    {  
-         category : 2,
-        image: 'image/fuku-red.png',
-        parts: [
-            { type: 'select', text: 'あ' },
-            { type: 'select', text: 'か' },
-            { type: 'trace',  text: 'い' },
-            { type: 'select', text: 'ふ' },
-            { type: 'select', text: 'く' }
-        ]
-    },
-    {
-        category : 2,
-        image: 'image/fuku-green.png',
-        parts: [
-            { type: 'select', text: 'み' },
-            { type: 'select', text: 'ど' },
-            { type: 'select', text: 'り' },
-            { type: 'trace',  text: 'の' },
-            { type: 'select', text: 'ふ' },
-            { type: 'select', text: 'く' }
-        ]
-    },
-    {
-        category : 2,
-        image: 'image/fuku-yellow.png',
-        parts: [
-            { type: 'select', text: 'き' },
-            { type: 'select', text: 'い' },
-            { type: 'select', text: 'ろ' },
-            { type: 'trace',  text: 'い' },
-            { type: 'select', text: 'ふ' },
-            { type: 'select', text: 'く' }
-        ]
-    },
-    {
-    category : 2,
-        image: 'image/kago-yellow.png',
-        parts: [
-            { type: 'select', text: 'き' },
-            { type: 'select', text: 'い' },
-            { type: 'select', text: 'ろ' },
-            { type: 'trace',  text: 'い' },
-            { type: 'select', text: 'か' },
-            { type: 'select', text: 'ご' }
-        ]
-    },
-    {
-        category : 2,
-        image: 'image/kago-green.png',
-        parts: [
-            { type: 'select', text: 'み' },
-            { type: 'select', text: 'ど' },
-            { type: 'select', text: 'り' },
-            { type: 'trace',  text: 'の' },
-            { type: 'select', text: 'か' },
-            { type: 'select', text: 'ご' }
-        ]
-    },
-    {
-        category : 2,
-        image: 'image/kago-red.png',
-        parts: [
-            { type: 'select', text: 'あ' },
-            { type: 'select', text: 'か' },
-            { type: 'trace',  text: 'い' },
-            { type: 'select', text: 'か' },
-            { type: 'select', text: 'ご' }
-        ]
-    },
-     {
-        category : 2,
-        image: 'image/kago-blue.png',
-        parts: [
-            { type: 'select', text: 'あ' },
-            { type: 'select', text: 'お' },
-            { type: 'trace',  text: 'い' },
-            { type: 'select', text: 'か' },
-            { type: 'select', text: 'ご' }
-        ]
-    },
-    {
-        category : 2,
-        image: 'image/isu-yellow.png',
-        parts: [
-            { type: 'select', text: 'き' },
-            { type: 'select', text: 'い' },
-            { type: 'select', text: 'ろ' },
-            { type: 'trace',  text: 'い' },
-            { type: 'select', text: 'い' },
-            { type: 'select', text: 'す' }
-        ]
-    },
-    {
-        category : 2,
-        image: 'image/isu-green.png',
-        parts: [
-            { type: 'select', text: 'み' },
-            { type: 'select', text: 'ど' },
-            { type: 'select', text: 'り' },
-            { type: 'trace',  text: 'の' },
-            { type: 'select', text: 'い' },
-            { type: 'select', text: 'す' }
-        ]
-    },
-    {
-        category : 2,
-        image: 'image/isu-red.png',
-        parts: [
-            { type: 'select', text: 'あ' },
-            { type: 'select', text: 'か' },
-            { type: 'trace',  text: 'い' },
-            { type: 'select', text: 'い' },
-            { type: 'select', text: 'す' }
-        ]
-    },
-     {
-        category : 2,
-        image: 'image/isu-blue.png',
-        parts: [
-            { type: 'select', text: 'あ' },
-            { type: 'select', text: 'お' },
-            { type: 'trace',  text: 'い' },
-            { type: 'select', text: 'い' },
-            { type: 'select', text: 'す' }
-        ]
-    },
-    
+// ④ キーボードを２つのタブに分割
+const hiraganaBasic = [
+    'わ', 'ら', 'や', 'ま', 'は', 'な', 'た', 'さ', 'か', 'あ',
+    '　', 'り', '　', 'み', 'ひ', 'に', 'ち', 'し', 'き', 'い',
+    'を', 'る', 'ゆ', 'む', 'ふ', 'ぬ', 'つ', 'す', 'く', 'う',
+    '　', 'れ', '　', 'め', 'へ', 'ね', 'て', 'せ', 'け', 'え',
+    'ん', 'ろ', 'よ', 'も', 'ほ', 'の', 'と', 'そ', 'こ', 'お',
 ];
 
-
-const hiragana = [
-    'あ', 'い', 'う', 'え', 'お',
-    'か', 'き', 'く', 'け', 'こ',
-    'さ', 'し', 'す', 'せ', 'そ',
-    'た', 'ち', 'つ', 'て', 'と',
-    'な', 'に', 'ぬ', 'ね', 'の',
-    'は', 'ひ', 'ふ', 'へ', 'ほ',
-    'ま', 'み', 'む', 'め', 'も',
-    'や', '　', 'ゆ', '　', 'よ',
-    'ら', 'り', 'る', 'れ', 'ろ',
-    'わ', '　', 'を', '　', 'ん',
-    'が', 'ぎ', 'ぐ', 'げ', 'ご',
-    'ざ', 'じ', 'ず', 'ぜ', 'ぞ',
-    'だ', 'ぢ', 'づ', 'で', 'ど',
-    'ば', 'び', 'ぶ', 'べ', 'ぼ',
-    'ぱ', 'ぴ', 'ぷ', 'ぺ', 'ぽ'
+const hiraganaDakuten = [
+    'ぱ', 'ば', 'だ', 'ざ', 'が',
+    'ぴ', 'び', 'ぢ', 'じ', 'ぎ',
+    'ぷ', 'ぶ', 'づ', 'ず', 'ぐ',
+    'ぺ', 'べ', 'で', 'ぜ', 'げ',
+    'ぽ', 'ぼ', 'ど', 'ぞ', 'ご',
 ];
+
+// cols: キーボードの列数 (CSSのgrid-template-columnsと合わせる)
+function buildGrid(container, chars, cols = 10) {
+    chars.forEach((char, i) => {
+        const button = document.createElement('button');
+        button.textContent = char;
+        button.classList.add(Math.floor(i / cols) % 2 === 0 ? 'row-dark' : 'row-light');
+        button.classList.add('btn-fall-in');
+        button.style.animationDelay = `${(Math.floor(i / cols) * 0.1).toFixed(2)}s`;
+        if (char !== '　') {
+            button.addEventListener('click', () => { checkAnswer(char); });
+        }
+        container.appendChild(button);
+    });
+}
 
 const gridContainer = document.getElementById('hiragana-container');
+const gridDakutenContainer = document.getElementById('hiragana-dakuten-container');
 const tracingModal = document.getElementById('tracing-modal');
 
+buildGrid(gridContainer, hiraganaBasic);
+buildGrid(gridDakutenContainer, hiraganaDakuten, 5);
 
-hiragana.forEach((char, i) => {
-    const button = document.createElement('button');
-    button.textContent = char;
-    button.classList.add(Math.floor(i / 5) % 2 === 0 ? 'row-dark' : 'row-light');
-    button.classList.add('btn-fall-in');
-    button.style.animationDelay = `${(Math.floor(i / 5) * 0.1).toFixed(2)}s`;
-    if (char !== '　') {
-        button.addEventListener('click', () => {
-            checkAnswer(char);
-        });
-    }
-    gridContainer.appendChild(button);
-});
+// ④ 1つの切り替えボタン: 押すたびに基本↔濁音を切り替える
+let currentKeyboard = 'basic';
+const keyboardToggleBtn = document.getElementById('keyboard-toggle-btn');
 
+if (keyboardToggleBtn) {
+    keyboardToggleBtn.addEventListener('click', () => {
+        if (currentKeyboard === 'basic') {
+            gridContainer.classList.add('hidden');
+            gridDakutenContainer.classList.remove('hidden');
+            keyboardToggleBtn.textContent = 'あかさ…';
+            currentKeyboard = 'dakuten';
+        } else {
+            gridContainer.classList.remove('hidden');
+            gridDakutenContainer.classList.add('hidden');
+            keyboardToggleBtn.textContent = 'がざだ…';
+            currentKeyboard = 'basic';
+        }
+    });
+}
 
 const openMenuButton = document.getElementById('open-menu-btn');
 const closeMenuButton = document.getElementById('close-menu-btn');
@@ -342,13 +131,11 @@ function showFeedback(type) {
     if (!el) return;
 
     el.classList.add('show');
-    
-    
+
     setTimeout(() => {
         el.classList.remove('show');
     }, 600);
 }
-
 
 
 
@@ -359,19 +146,19 @@ function loadQuestion(index) {
     }
 
     currentQuestionIndex = index;
-    
 
     const probCounter = document.querySelector(".question-counter");
     if(probCounter) probCounter.innerHTML= (index + 1) + '/' + activeQuestions.length;
-    
+
     currentPartIndex = 0;
     currentLetterIndex = 0;
     currentSlotIndex = 0;
-    
+    isPreTraceSelectMode = false;
+    mistakeMade = false;
+
     const question = activeQuestions[index];
     const imageElement = document.getElementById('question-image');
-    
-    
+
     imageElement.classList.remove('img-fall-in');
     imageElement.removeAttribute('src');
     imageElement.style.opacity = '0';
@@ -389,7 +176,7 @@ function loadQuestion(index) {
             resizeCanvas();
         }
     };
-    
+
     const slotContainer = document.getElementById('answer-slots-container');
     slotContainer.innerHTML = '';
     slotContainer.classList.remove('loaded');
@@ -416,25 +203,50 @@ function loadQuestion(index) {
     requestAnimationFrame(() => slotContainer.classList.add('loaded'));
 }
 
+// ③ なぞる前に文字を選ぶモードに入る
+function enterPreTraceSelectMode(letter) {
+    currentTracingLetter = letter;
+    isPreTraceSelectMode = true;
+    const slots = document.querySelectorAll(".answer-slot");
+    if (slots[currentSlotIndex]) {
+        slots[currentSlotIndex].classList.add('slot-pre-trace');
+    }
+}
 
 function checkAnswer(clickedChar) {
     if (!activeQuestions || activeQuestions.length === 0) return;
 
+    // ③ プリトレースセレクトモード: なぞる文字を先に選ぶ
+    if (isPreTraceSelectMode) {
+        if (clickedChar === currentTracingLetter) {
+            correctSound.currentTime = 0;
+            correctSound.play();
+            showFeedback('correct');
+            isPreTraceSelectMode = false;
+            document.querySelectorAll('.slot-pre-trace').forEach(s => s.classList.remove('slot-pre-trace'));
+            showTracingGuide(currentTracingLetter);
+        } else {
+            wrongSound.currentTime = 0;
+            wrongSound.play();
+            showFeedback('wrong');
+            mistakeMade = true;
+        }
+        return;
+    }
+
     const question = activeQuestions[currentQuestionIndex];
     const currentPart = question.parts[currentPartIndex];
-    
+
     if (currentPart.type === 'trace') return;
 
     const correctChar = currentPart.text[currentLetterIndex];
 
     if(clickedChar == correctChar){
-        correctSound.currentTime = 0; 
+        correctSound.currentTime = 0;
         correctSound.play();
-        
-        showFeedback('correct'); 
-        
-        console.log("Correct Select");
-        
+
+        showFeedback('correct');
+
         const slots = document.querySelectorAll(".answer-slot");
         const nowSlot = slots[currentSlotIndex];
         nowSlot.textContent = clickedChar;
@@ -448,16 +260,17 @@ function checkAnswer(clickedChar) {
         if(currentLetterIndex >= currentPart.text.length){
             currentPartIndex++;
             currentLetterIndex = 0;
-            
+
             if (currentPartIndex < question.parts.length) {
                 const nextPart = question.parts[currentPartIndex];
                 if (nextPart.type === 'trace') {
-                    showTracingGuide(nextPart.text);
-                    return; 
+                    // ③ 直接なぞりに進まず、まず文字を選ばせる
+                    enterPreTraceSelectMode(nextPart.text);
+                    return;
                 }
             } else {
-                if (!mistakeMade) score++; 
-                setTimeout(() => loadQuestion(++currentQuestionIndex), 800); 
+                if (!mistakeMade) score++;
+                setTimeout(() => loadQuestion(++currentQuestionIndex), 800);
             }
         }
 
@@ -465,7 +278,7 @@ function checkAnswer(clickedChar) {
         wrongSound.currentTime = 0;
         wrongSound.play();
         showFeedback('wrong');
-        console.log("Wrong Select");
+        mistakeMade = true;
     }
 }
 
@@ -499,7 +312,11 @@ function showResultScreen() {
     const backBtn = document.createElement('button');
     backBtn.className = 'modal-close-button result-btn-red';
     backBtn.textContent = "もどる";
-    backBtn.onclick = () => { window.location.href = "page2.html"; };
+    backBtn.onclick = () => {
+        window.location.href = currentStudentId
+            ? `page2.html?student=${currentStudentId}`
+            : "page2.html";
+    };
 
     controls.appendChild(againBtn);
     controls.appendChild(backBtn);
@@ -509,12 +326,23 @@ function showResultScreen() {
     content.appendChild(scoreText);
     content.appendChild(controls);
     overlay.appendChild(content);
-    
+
     document.body.appendChild(overlay);
-    
+
     if(score === activeQuestions.length){
-        const perfectSound = new Audio('tadashii.mp3'); 
+        const perfectSound = new Audio('tadashii.mp3');
         perfectSound.play();
+    }
+
+    // スコアをFirestoreに保存
+    if (currentStudentId) {
+        addDoc(collection(db, "scores"), {
+            studentId: currentStudentId,
+            category: currentCategory,
+            score,
+            total: activeQuestions.length,
+            date: new Date()
+        }).catch(console.error);
     }
 }
 
@@ -532,32 +360,32 @@ let currentStroke = [];
 function getScale() {
     const wrapper = document.querySelector('.drawing-box');
     if (!wrapper) return 1;
-    return wrapper.clientWidth / 300; 
+    return wrapper.clientWidth / 300;
 }
 
 function setDrawingStyle() {
     const scale = getScale();
-    const brushSize = 25 * scale; 
-    
-    ctx.strokeStyle = "black"; 
-    ctx.lineWidth = brushSize;        
+    const brushSize = 9 * scale;
+
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = brushSize;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
 }
 
 function resizeCanvas(){
-   const wrapper = document.querySelector('.drawing-box'); 
+   const wrapper = document.querySelector('.drawing-box');
    if(!wrapper) return;
-   
+
    const width = wrapper.clientWidth;
    const height = wrapper.clientHeight;
-    
+
    if (tracingCanvas.width !== width || tracingCanvas.height !== height) {
        tracingCanvas.width = width;
        tracingCanvas.height = height;
        ghostCanvas.width = width;
        ghostCanvas.height = height;
-       
+
        if (isTracingMode && currentTracingLetter) {
            drawGhost(currentTracingLetter);
            redrawCanvas(currentTracingLetter);
@@ -570,15 +398,15 @@ function resizeCanvas(){
 
 function showTracingGuide(letter) {
     isTracingMode = true;
-    currentTracingLetter = letter; 
-    strokes = []; 
-    
+    currentTracingLetter = letter;
+    strokes = [];
+
     tracingModal.classList.add('is-visible');
-    
+
     setTimeout(() => {
-        resizeCanvas(); 
-        drawGhost(letter); 
-        redrawCanvas(letter); 
+        resizeCanvas();
+        drawGhost(letter);
+        redrawCanvas(letter);
     }, 100);
 }
 
@@ -586,21 +414,21 @@ function showTracingGuide(letter) {
 function drawGhost(letter) {
     ghostCtx.clearRect(0, 0, ghostCanvas.width, ghostCanvas.height);
     const fontSize = Math.min(ghostCanvas.width, ghostCanvas.height) * 0.7;
-    
-    ghostCtx.font = `bold ${fontSize}px sans-serif`; 
+
+    ghostCtx.font = `bold ${fontSize}px sans-serif`;
     ghostCtx.textAlign = "center";
     ghostCtx.textBaseline = "middle";
-    ghostCtx.fillStyle = "black"; 
-    
+    ghostCtx.fillStyle = "black";
+
     const x = ghostCanvas.width / 2;
     const y = ghostCanvas.height / 2;
-    
+
     ghostCtx.fillText(letter, x, y);
-    
+
     const ghostWidth = Math.min(ghostCanvas.width, ghostCanvas.height) * 0.18;
-    
+
     ghostCtx.strokeStyle = "black";
-    ghostCtx.lineWidth = ghostWidth; 
+    ghostCtx.lineWidth = ghostWidth;
     ghostCtx.lineJoin = "round";
     ghostCtx.strokeText(letter, x, y);
 }
@@ -608,15 +436,15 @@ function drawGhost(letter) {
 
 function redrawCanvas(letter) {
   ctx.clearRect(0, 0, tracingCanvas.width, tracingCanvas.height);
-  
+
   const fontSize = Math.min(tracingCanvas.width, tracingCanvas.height) * 0.7;
-  ctx.font = `bold ${fontSize}px sans-serif`; 
-  ctx.fillStyle = "rgba(0, 0, 0, 0.15)"; 
+  ctx.font = `bold ${fontSize}px sans-serif`;
+  ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(letter, tracingCanvas.width / 2, tracingCanvas.height / 2);
 
-  setDrawingStyle(); 
+  setDrawingStyle();
 
   strokes.forEach(stroke => {
     ctx.beginPath();
@@ -631,7 +459,7 @@ function redrawCanvas(letter) {
 function getPos(event) {
     const rect = tracingCanvas.getBoundingClientRect();
     let clientX, clientY;
-    
+
     if (event.changedTouches && event.changedTouches.length > 0) {
         clientX = event.changedTouches[0].clientX;
         clientY = event.changedTouches[0].clientY;
@@ -639,7 +467,7 @@ function getPos(event) {
         clientX = event.clientX;
         clientY = event.clientY;
     }
-    
+
     return {
         x: clientX - rect.left,
         y: clientY - rect.top
@@ -648,13 +476,13 @@ function getPos(event) {
 
 function startDrawing(e) {
    if (e.type === 'mousedown' && e.button !== 0) return;
-   e.preventDefault(); 
-   
+   e.preventDefault();
+
    isDrawing = true;
    currentStroke = [];
    const pos = getPos(e);
    currentStroke.push(pos);
-   
+
    ctx.beginPath();
    ctx.moveTo(pos.x, pos.y);
    ctx.lineTo(pos.x, pos.y);
@@ -674,7 +502,7 @@ function stopDrawing() {
     if (!isDrawing) return;
     isDrawing = false;
     ctx.closePath();
-    
+
     if (currentStroke.length > 0) {
         strokes.push(currentStroke);
     }
@@ -685,35 +513,25 @@ function isTracingCorrect(letter) {
   const w = tracingCanvas.width;
   const h = tracingCanvas.height;
 
-  const validStrokes = strokes.filter(s => {
-      let length = 0;
-      for(let i=1; i<s.length; i++) {
-          const dx = s[i].x - s[i-1].x;
-          const dy = s[i].y - s[i-1].y;
-          length += Math.sqrt(dx*dx + dy*dy);
-      }
-      return length > 10; 
-  });
-
   const userImg = ctx.getImageData(0, 0, w, h).data;
   const ghostImg = ghostCtx.getImageData(0, 0, w, h).data;
-  
-  let targetPixels = 0; 
-  let filledPixels = 0; 
+
+  let targetPixels = 0;
+  let filledPixels = 0;
   let overlapPixels = 0;
-  
+
   for (let i = 0; i < userImg.length; i += 4) {
-      const ghostAlpha = ghostImg[i+3]; 
-      const userAlpha = userImg[i+3]; 
-      const userRed = userImg[i]; 
-      
-      const isTarget = ghostAlpha > 50; 
-      const isUserInk = userAlpha > 100 && userRed < 100; 
-      
+      const ghostAlpha = ghostImg[i+3];
+      const userAlpha = userImg[i+3];
+      const userRed = userImg[i];
+
+      const isTarget = ghostAlpha > 50;
+      const isUserInk = userAlpha > 100 && userRed < 100;
+
       if (isTarget) {
           targetPixels++;
       }
-      
+
       if (isUserInk) {
           filledPixels++;
           if (isTarget) {
@@ -721,13 +539,13 @@ function isTracingCorrect(letter) {
           }
       }
   }
-  
-  if (targetPixels === 0) return true; 
 
-  const coverage = (overlapPixels / targetPixels) * 100; 
+  if (targetPixels === 0) return true;
+
+  const coverage = (overlapPixels / targetPixels) * 100;
   const outside = filledPixels - overlapPixels;
-  const errorRate = filledPixels > 0 ? (outside / filledPixels) * 100 : 100; 
-  
+  const errorRate = filledPixels > 0 ? (outside / filledPixels) * 100 : 100;
+
   return (coverage > 20 && errorRate < 10);
 }
 
@@ -739,7 +557,7 @@ function acceptTracingAnswer() {
     const slots = document.querySelectorAll(".answer-slot");
     const nowSlot = slots[currentSlotIndex];
     nowSlot.textContent = char;
-    nowSlot.classList.remove('slot-filled', 'slot-enter');
+    nowSlot.classList.remove('slot-filled', 'slot-enter', 'slot-pre-trace');
     void nowSlot.offsetWidth;
     nowSlot.classList.add('slot-filled');
 
@@ -747,13 +565,14 @@ function acceptTracingAnswer() {
     currentPartIndex++;
     currentLetterIndex = 0;
     isTracingMode = false;
-    
+
     showFeedback('correct');
 
     if (currentPartIndex < question.parts.length) {
         const nextPart = question.parts[currentPartIndex];
         if (nextPart.type === 'trace') {
-            setTimeout(() => showTracingGuide(nextPart.text), 500);
+            // 次もなぞりの場合は先に文字選択
+            setTimeout(() => enterPreTraceSelectMode(nextPart.text), 500);
             return;
         }
     } else {
@@ -762,18 +581,51 @@ function acceptTracingAnswer() {
 }
 
 
+// ① できたボタン: 採点モードで動作が変わる
 document.getElementById('done-btn').onclick = () => {
-  if (isTracingCorrect(currentTracingLetter)) {
+    if (scoringEnabled) {
+        // 採点オン: ピクセル判定で自動採点
+        if (isTracingCorrect(currentTracingLetter)) {
+            correctSound.currentTime = 0;
+            correctSound.play();
+            tracingModal.classList.remove('is-visible');
+            acceptTracingAnswer();
+        } else {
+            wrongSound.currentTime = 0;
+            wrongSound.play();
+            mistakeMade = true;
+            alert("ラインの中でなぞってください");
+        }
+    } else {
+        // 採点オフ: 先生が手動で○×を判断する
+        document.getElementById('done-btn').style.display = 'none';
+        document.getElementById('teacher-judge').classList.remove('hidden');
+        tracingCanvas.style.pointerEvents = 'none';
+    }
+};
+
+// ① 先生の○ボタン
+document.getElementById('judge-correct').onclick = () => {
     correctSound.currentTime = 0;
     correctSound.play();
+    document.getElementById('teacher-judge').classList.add('hidden');
+    document.getElementById('done-btn').style.display = '';
+    tracingCanvas.style.pointerEvents = 'auto';
     tracingModal.classList.remove('is-visible');
-    acceptTracingAnswer(); 
-  } else {
+    acceptTracingAnswer();
+};
+
+// ① 先生の×ボタン
+document.getElementById('judge-wrong').onclick = () => {
     wrongSound.currentTime = 0;
     wrongSound.play();
-    mistakeMade = true; 
-    alert("ラインの中でなぞってください");
-  }
+    mistakeMade = true;
+    document.getElementById('teacher-judge').classList.add('hidden');
+    document.getElementById('done-btn').style.display = '';
+    tracingCanvas.style.pointerEvents = 'auto';
+    // キャンバスをクリアして書き直せるようにする
+    strokes = [];
+    redrawCanvas(currentTracingLetter);
 };
 
 document.getElementById('undo-btn').onclick = () => {
@@ -810,47 +662,55 @@ function shuffleArray(array) {
 document.addEventListener('DOMContentLoaded', async () => {
     score = 0;
     const probCounter = document.querySelector(".question-counter");
-    if(probCounter) probCounter.innerHTML = "読込中... (Connecting)"; 
+    if(probCounter) probCounter.innerHTML = "読込中...";
 
     const params = new URLSearchParams(window.location.search);
     const categoryParam = params.get('category');
-    const category = categoryParam ? parseInt(categoryParam) : 2; 
-
+    currentCategory = categoryParam ? parseInt(categoryParam) : 2;
     const countParam = params.get('count');
     const maxCount = countParam ? parseInt(countParam) : 5;
+    currentStudentId = params.get('student');
 
-    
-    try {
-        await signInAnonymously(auth);
-        console.log("Signed in anonymously");
-    } catch (error) {
-        console.error("Auth Error:", error);
-        
+    try { await signInAnonymously(auth); } catch(e) { console.error("Auth Error:", e); }
+
+    // 生徒情報の読み込み
+    let student = null;
+    if (currentStudentId) {
+        try {
+            const studentSnap = await getDoc(doc(db, "students", currentStudentId));
+            if (studentSnap.exists()) {
+                student = studentSnap.data();
+                const nameEl = document.getElementById('student-name-display');
+                if (nameEl) nameEl.textContent = student.name;
+            }
+        } catch(e) { console.error("Student load error:", e); }
     }
 
-    
+    // 問題の読み込み（Firestore IDも保存）
     let downloadedQuestions = [];
     try {
         const snapshot = await getDocs(collection(db, "questions"));
-        snapshot.forEach(doc => {
-          
-            downloadedQuestions.push(doc.data());
+        snapshot.forEach(docSnap => {
+            downloadedQuestions.push({ firestoreId: docSnap.id, ...docSnap.data() });
         });
-        console.log("Downloaded questions from Firebase:", downloadedQuestions.length);
-    } catch (e) {
+    } catch(e) {
         console.error("Firebase Error (Continuing with local data only):", e);
         if(probCounter) probCounter.innerHTML = "DB Error (Using Local)";
     }
 
-  
     const allQuestions = [...problemDatabase, ...downloadedQuestions];
-    console.log("Total Combined Questions:", allQuestions.length);
 
-   
-    const filtered = allQuestions.filter(p => p.category === category);
-    
+    const assigned = student?.assignedQuestionIds;
+    const hasAssignment = assigned && assigned.length > 0;
+    const filtered = allQuestions.filter(p => {
+        if (p.category !== currentCategory) return false;
+        if (!hasAssignment) return true;
+        const qid = p.firestoreId ?? p.id;
+        return assigned.includes(qid);
+    });
+
     if(filtered.length === 0) {
-        alert(`まだこのレベルの問題がありません！\n(No Level ${category} questions found)\n管理画面で追加してください。`);
+        alert(`まだこのレベルの問題がありません！\n管理画面で追加してください。`);
         if(probCounter) probCounter.innerHTML = "0/0";
         return;
     }
@@ -858,11 +718,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     shuffleArray(filtered);
     activeQuestions = filtered.slice(0, Math.min(maxCount, filtered.length));
 
-    
-    if(probCounter) probCounter.innerHTML = `Loaded: ${downloadedQuestions.length} (DB) + ${problemDatabase.length} (Local)`;
+    if(probCounter) probCounter.innerHTML = `1/${activeQuestions.length}`;
 
-    
-    setTimeout(() => {
-        loadQuestion(0);
-    }, 1000); 
+    setTimeout(() => { loadQuestion(0); }, 1000);
 });

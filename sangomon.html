@@ -14,10 +14,20 @@
     <main class="center-container">
         <div class="header2"><h1>3ごぶん</h1></div>
 
-<div class="box button-mon1"> <a class="text" href="game.html?category=3&count=10">10もん</a> </div>
-<div class="box button-mon2"> <a class="text" href="game.html?category=3&count=5">5もん</a> </div>
+<div class="box button-mon1"> <a class="text" id="link-10" href="game.html?category=3&count=10">10もん</a> </div>
+<div class="box button-mon2"> <a class="text" id="link-5" href="game.html?category=3&count=5">5もん</a> </div>
 <div class="box2 button-start"> <a class="text2" href="index.html">さいしょにもどる</a> </div>
-<div class="box2 button-back"> <a class="text2" href="page2.html">もどる</a> </div>
+<div class="box2 button-back"> <a class="text2" id="link-back" href="page2.html">もどる</a> </div>
+<script>
+(function() {
+    const sid = new URLSearchParams(window.location.search).get('student');
+    if (sid) {
+        document.getElementById('link-10').href += '&student=' + sid;
+        document.getElementById('link-5').href += '&student=' + sid;
+        document.getElementById('link-back').href += '?student=' + sid;
+    }
+})();
+</script>
         </main>
 </body>
 </html>

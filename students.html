@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>だれがやる？</title>
+    <link rel="stylesheet" href="sanitize.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rampart+One&family=M+PLUS+Rounded+1c:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: "M PLUS Rounded 1c", sans-serif;
+            background-image: url('bg_school_taiikukan.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .page-container {
+            min-height: 100vh;
+            padding: 20px 20px 100px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: clamp(2rem, 8vw, 4.5rem);
+            color: #0099ff;
+            font-weight: 900;
+            text-align: center;
+            font-family: "M PLUS Rounded 1c", sans-serif;
+            text-shadow: 5px 3px 5px #fff, -5px -3px 5px #fff, 5px -3px 5px #fff, -5px 3px 5px #fff;
+            margin: 24px 0 32px;
+        }
+
+        .students-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .student-card {
+            background: #4fc3f7;
+            border: 4px solid #000;
+            border-radius: 24px;
+            padding: 18px 12px 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #0277bd;
+            text-decoration: none;
+            transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+            text-align: center;
+        }
+
+        .student-card:hover  { transform: scale(1.06); }
+        .student-card:active { transform: translateY(6px); box-shadow: 0 2px 0 #0277bd; }
+
+        .student-photo {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #fff;
+            background: #e0f7fa;
+        }
+
+        .student-name {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+            word-break: break-all;
+        }
+
+        .message {
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: 900;
+            text-align: center;
+            text-shadow: 1px 1px 0 #000, -1px -1px 0 #000;
+            margin: 40px 0;
+            line-height: 1.8;
+        }
+
+        .teacher-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            font-family: "M PLUS Rounded 1c", sans-serif;
+            font-weight: 900;
+            font-size: 1.1rem;
+            padding: 12px 28px;
+            border-radius: 50px;
+            border: 3px solid #000;
+            background: #95a5a6;
+            color: #fff;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 5px 0 #7f8c8d;
+            text-shadow: 1px 1px 0 #000, -1px -1px 0 #000;
+            display: inline-block;
+            transition: transform 0.12s ease-out;
+        }
+        .teacher-btn:hover  { transform: scale(1.05); }
+        .teacher-btn:active { transform: translateY(4px); box-shadow: none; }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <h1 class="page-title">だれがやる？</h1>
+        <div id="students-grid" class="students-grid">
+            <p class="message">よみこみちゅう…</p>
+        </div>
+    </div>
+
+    <a href="admin.html" class="teacher-btn">👩‍🏫 先生</a>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAVvYZLRnhXw0r_L9qsWYKu2kQZmOyJSLs",
+            authDomain: "nihongo-naraimashou.firebaseapp.com",
+            projectId: "nihongo-naraimashou",
+            storageBucket: "nihongo-naraimashou.appspot.com",
+            messagingSenderId: "555772220708",
+            appId: "1:555772220708:web:230347906896dd49390fb1"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db  = getFirestore(app);
+        const auth = getAuth(app);
+
+        try { await signInAnonymously(auth); } catch(e) { console.error(e); }
+
+        const grid = document.getElementById('students-grid');
+
+        try {
+            const snapshot = await getDocs(collection(db, "students"));
+            let students = [];
+            snapshot.forEach(d => students.push({ id: d.id, ...d.data() }));
+            students.sort((a, b) => a.name.localeCompare(b.name, 'ja'));
+
+            if (students.length === 0) {
+                grid.innerHTML = '<p class="message">まだ生徒がいません。<br>👩‍🏫 先生にきいてね！</p>';
+            } else {
+                grid.innerHTML = '';
+                students.forEach(student => {
+                    const card = document.createElement('a');
+                    card.className = 'student-card';
+                    card.href = `page2.html?student=${student.id}`;
+
+                    const img = document.createElement('img');
+                    img.className = 'student-photo';
+                    img.src = student.photo || 'computer_tokui_boy.png';
+                    img.alt = student.name;
+                    img.onerror = () => { img.src = 'computer_tokui_boy.png'; };
+
+                    const name = document.createElement('div');
+                    name.className = 'student-name';
+                    name.textContent = student.name;
+
+                    card.appendChild(img);
+                    card.appendChild(name);
+                    grid.appendChild(card);
+                });
+            }
+        } catch(e) {
+            console.error(e);
+            grid.innerHTML = '<p class="message">よみこみエラー 😢</p>';
+        }
+    </script>
+</body>
+</html>
