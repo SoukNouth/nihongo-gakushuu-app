@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>せんせいガイド</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            min-height: 100%;
+            font-family: "M PLUS Rounded 1c", sans-serif;
+            background: #e8f5e9;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4fc3f7, #0099ff);
+            padding: 28px 20px 20px;
+            text-align: center;
+            box-shadow: 0 4px 0 #0277bd;
+        }
+
+        header h1 {
+            font-size: clamp(1.8rem, 6vw, 3rem);
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+        }
+
+        header p {
+            color: #e3f2fd;
+            font-size: 1rem;
+            margin-top: 6px;
+            font-weight: 700;
+        }
+
+        main {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 28px 16px 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .step-card {
+            background: #fff;
+            border-radius: 20px;
+            border: 3px solid #000;
+            box-shadow: 0 6px 0 #b2dfdb;
+            overflow: hidden;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 20px;
+            background: #4fc3f7;
+            border-bottom: 3px solid #000;
+        }
+
+        .step-num {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #fff;
+            border: 3px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #0099ff;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+        }
+
+        .step-body {
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .step-body p {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #333;
+            line-height: 1.7;
+        }
+
+        .tip-box {
+            background: #fffde7;
+            border: 2px dashed #f9a825;
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .tip-box .icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
+
+        .tip-box p {
+            font-size: 0.95rem;
+            color: #5d4037;
+            font-weight: 700;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #0099ff;
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 900;
+            padding: 3px 12px;
+            border-radius: 50px;
+            border: 2px solid #000;
+            text-shadow: 1px 1px 0 #0056b3;
+            white-space: nowrap;
+        }
+
+        .tag.green { background: #43a047; }
+        .tag.orange { background: #ff9800; }
+        .tag.red { background: #ef5350; }
+        .tag.purple { background: #8e24aa; }
+
+        .flow-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .flow-arrow { font-size: 1.2rem; color: #0099ff; flex-shrink: 0; }
+
+        .scoring-demo {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .score-pill {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .score-pill .pill-btn {
+            font-family: "M PLUS Rounded 1c", sans-serif;
+            font-weight: 900;
+            font-size: 1rem;
+            padding: 8px 22px;
+            border-radius: 50px;
+            border: 3px solid #000;
+            color: #fff;
+            text-shadow: 1px 1px 0 #000;
+        }
+
+        .pill-auto { background: #69f0ae; box-shadow: 0 4px 0 #00897b; }
+        .pill-teacher { background: #bdbdbd; box-shadow: 0 4px 0 #757575; }
+
+        .score-pill .pill-label {
+            font-size: 0.85rem;
+            font-weight: 900;
+            color: #555;
+        }
+
+        .back-btn {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            font-family: "M PLUS Rounded 1c", sans-serif;
+            font-weight: 900;
+            font-size: 1.1rem;
+            padding: 12px 28px;
+            border-radius: 50px;
+            border: 3px solid #000;
+            background: #ff6b6b;
+            color: #fff;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 5px 0 #c0392b;
+            text-shadow: 1px 1px 0 #000, -1px -1px 0 #000;
+            display: inline-block;
+            transition: transform 0.12s ease-out;
+        }
+        .back-btn:hover  { transform: scale(1.05); }
+        .back-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        @media (min-width: 600px) {
+            .step-body { padding: 22px 28px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>📖 せんせいガイド</h1>
+    <p>アプリの使い方をわかりやすく説明します</p>
+</header>
+
+<main>
+
+    <!-- STEP 1: Admin panel -->
+    <div class="step-card">
+        <div class="step-header">
+            <div class="step-num">1</div>
+            <div class="step-title">👩‍🏫 かんりパネルを開く</div>
+        </div>
+        <div class="step-body">
+            <p>トップページの「はじめる」→ 右下の <span class="tag">👩‍🏫 先生</span> ボタンから管理パネル（<code>admin.html</code>）に入ります。</p>
+            <div class="tip-box">
+                <span class="icon">💡</span>
+                <p>管理パネルには「生徒」「問題」「進捗」の３つのタブがあります。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- STEP 2: Add students -->
+    <div class="step-card">
+        <div class="step-header">
+            <div class="step-num">2</div>
+            <div class="step-title">👤 生徒を追加する</div>
+        </div>
+        <div class="step-body">
+            <div class="flow-row">
+                <span class="tag purple">生徒タブ</span>
+                <span class="flow-arrow">→</span>
+                <span class="tag green">＋ 生徒を追加</span>
+            </div>
+            <p>名前を入力し、写真を選んで「追加」ボタンを押します。<br>写真は後から変更できます。</p>
+            <div class="tip-box">
+                <span class="icon">📸</span>
+                <p>写真はJPG・PNG・GIF形式に対応しています。大きすぎる場合は自動で圧縮されます。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- STEP 3: Add questions -->
+    <div class="step-card">
+        <div class="step-header">
+            <div class="step-num">3</div>
+            <div class="step-title">📝 問題を追加する</div>
+        </div>
+        <div class="step-body">
+            <div class="flow-row">
+                <span class="tag orange">問題タブ</span>
+                <span class="flow-arrow">→</span>
+                <span class="tag green">＋ 問題を追加</span>
+            </div>
+            <p>以下の項目を入力します：</p>
+            <p>
+                <b>カテゴリ</b>：２語文 or ３語文<br>
+                <b>イラスト</b>：問題の絵（JPG・PNG）<br>
+                <b>文章</b>：例）「くるまに のる」<br>
+                <b>なぞる文字</b>：ひらがなキーボードで入力する文字（例：「の」）<br>
+                <b>※３語文</b>は「なぞる文字②」も設定できます
+            </p>
+            <div class="tip-box">
+                <span class="icon">✍️</span>
+                <p>「なぞる文字」以外の文字は、生徒がタッチキーボードから選んで入力します。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- STEP 4: Assign questions -->
+    <div class="step-card">
+        <div class="step-header">
+            <div class="step-num">4</div>
+            <div class="step-title">📋 生徒に問題を割り当てる</div>
+        </div>
+        <div class="step-body">
+            <div class="flow-row">
+                <span class="tag purple">生徒タブ</span>
+                <span class="flow-arrow">→</span>
+                <span class="tag orange">問題設定</span>
+            </div>
+            <p>生徒ごとに出題する問題を選べます。<br>チェックを入れた問題だけが、その生徒のゲームに出ます。</p>
+            <div class="tip-box">
+                <span class="icon">📌</span>
+                <p>割り当てなしの場合は全問題が出題されます。最初はそのまま使ってみてください！</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- STEP 5: Scoring toggle -->
+    <div class="step-card">
+        <div class="step-header">
+            <div class="step-num">5</div>
+            <div class="step-title">✅ 採点モードを設定する</div>
+        </div>
+        <div class="step-body">
+            <p>「はじめる」画面の左下にある「採点」ボタンで切り替えます。</p>
+            <div class="scoring-demo">
+                <div class="score-pill">
+                    <div class="pill-btn pill-auto">自動</div>
+                    <div class="pill-label">コンピューターが採点</div>
+                </div>
+                <div class="score-pill">
+                    <div class="pill-btn pill-teacher">先生</div>
+                    <div class="pill-label">先生が○×を決める</div>
+                </div>
+            </div>
+            <div class="tip-box">
+                <span class="icon">🎯</span>
+                <p>「先生」モードでは、答え合わせのタイミングを先生がコントロールできます。支援が必要な生徒に向いています。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- STEP 6: Game flow -->
+    <div class="step-card">
+        <div class="step-header">
+            <div class="step-num">6</div>
+            <div class="step-title">🎮 ゲームの流れ</div>
+        </div>
+        <div class="step-body">
+            <div class="flow-row">
+                <span class="tag">トップページ</span>
+                <span class="flow-arrow">→</span>
+                <span class="tag green">だれがやる？</span>
+                <span class="flow-arrow">→</span>
+                <span class="tag orange">２語文 or ３語文</span>
+                <span class="flow-arrow">→</span>
+                <span class="tag purple">問題スタート！</span>
+            </div>
+            <p>
+                ① 生徒が自分の名前をタップ<br>
+                ② ゲームの種類（２語文・３語文）を選ぶ<br>
+                ③ 絵を見て、ひらがなキーボードで文章を入力する<br>
+                ④ 正解すると次の問題へ進む
+            </p>
+            <div class="tip-box">
+                <span class="icon">🌟</span>
+                <p>正解するとキャラクターが喜びます！生徒のやる気アップに役立ちます。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- STEP 7: Progress -->
+    <div class="step-card">
+        <div class="step-header">
+            <div class="step-num">7</div>
+            <div class="step-title">📊 進捗を確認する</div>
+        </div>
+        <div class="step-body">
+            <div class="flow-row">
+                <span class="tag red">進捗タブ</span>
+            </div>
+            <p>管理パネルの「進捗」タブで、生徒ごとの回答記録を確認できます。<br>どの問題が正解・不正解だったかを一覧で見ることができます。</p>
+            <div class="tip-box">
+                <span class="icon">📈</span>
+                <p>定期的に進捗を確認して、苦手な問題をもう一度練習させましょう！</p>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<a href="index.html" class="back-btn">← もどる</a>
+
+</body>
+</html>
