@@ -509,44 +509,84 @@ function stopDrawing() {
 }
 
 
+// 判定用のオフスクリーンキャンバス
+const coreCanvas = document.createElement('canvas');
+const coreCtx = coreCanvas.getContext('2d', { willReadFrequently: true });
+const inkCanvas = document.createElement('canvas');
+const inkCtx = inkCanvas.getContext('2d', { willReadFrequently: true });
+
+function renderStrokes(targetCtx, lineWidth) {
+  targetCtx.clearRect(0, 0, targetCtx.canvas.width, targetCtx.canvas.height);
+  targetCtx.strokeStyle = "black";
+  targetCtx.fillStyle = "black";
+  targetCtx.lineWidth = lineWidth;
+  targetCtx.lineCap = "round";
+  targetCtx.lineJoin = "round";
+  strokes.forEach(stroke => {
+    targetCtx.beginPath();
+    stroke.forEach((p, i) => {
+      if (i === 0) targetCtx.moveTo(p.x, p.y);
+      else targetCtx.lineTo(p.x, p.y);
+    });
+    // 点だけのストロークも描画されるように
+    if (stroke.length === 1) targetCtx.lineTo(stroke[0].x + 0.1, stroke[0].y);
+    targetCtx.stroke();
+  });
+  return targetCtx.getImageData(0, 0, targetCtx.canvas.width, targetCtx.canvas.height).data;
+}
+
+// 判定:
+//  ① 文字の線（本体）がどれだけなぞられたか（なぞった線を太めにして比較）
+//  ② なぞった線がどれだけ許容範囲（ghost）からはみ出したか
 function isTracingCorrect(letter) {
   const w = tracingCanvas.width;
   const h = tracingCanvas.height;
+  if (strokes.length === 0) return false;
 
-  const userImg = ctx.getImageData(0, 0, w, h).data;
+  const minSide = Math.min(w, h);
+
+  // 文字本体（太らせない）
+  coreCanvas.width = w;
+  coreCanvas.height = h;
+  coreCtx.clearRect(0, 0, w, h);
+  coreCtx.font = `bold ${minSide * 0.7}px sans-serif`;
+  coreCtx.textAlign = "center";
+  coreCtx.textBaseline = "middle";
+  coreCtx.fillStyle = "black";
+  coreCtx.fillText(letter, w / 2, h / 2);
+  const coreImg = coreCtx.getImageData(0, 0, w, h).data;
+
+  // 許容範囲（文字を太らせたもの）
   const ghostImg = ghostCtx.getImageData(0, 0, w, h).data;
 
-  let targetPixels = 0;
-  let filledPixels = 0;
-  let overlapPixels = 0;
-
-  for (let i = 0; i < userImg.length; i += 4) {
-      const ghostAlpha = ghostImg[i+3];
-      const userAlpha = userImg[i+3];
-      const userRed = userImg[i];
-
-      const isTarget = ghostAlpha > 50;
-      const isUserInk = userAlpha > 100 && userRed < 100;
-
-      if (isTarget) {
-          targetPixels++;
-      }
-
-      if (isUserInk) {
-          filledPixels++;
-          if (isTarget) {
-              overlapPixels++;
-          }
-      }
+  inkCanvas.width = w;
+  inkCanvas.height = h;
+  // 実際の線の太さ
+  const inkImg = renderStrokes(inkCtx, 9 * getScale());
+  let inkPixels = 0, outsidePixels = 0;
+  for (let i = 3; i < inkImg.length; i += 4) {
+    if (inkImg[i] > 100) {
+      inkPixels++;
+      if (ghostImg[i] <= 50) outsidePixels++;
+    }
   }
 
-  if (targetPixels === 0) return true;
+  // 太めの線（多少ずれても本体をカバーできる）
+  const fatImg = renderStrokes(inkCtx, minSide * 0.16);
+  let corePixels = 0, coveredPixels = 0;
+  for (let i = 3; i < coreImg.length; i += 4) {
+    if (coreImg[i] > 128) {
+      corePixels++;
+      if (fatImg[i] > 100) coveredPixels++;
+    }
+  }
 
-  const coverage = (overlapPixels / targetPixels) * 100;
-  const outside = filledPixels - overlapPixels;
-  const errorRate = filledPixels > 0 ? (outside / filledPixels) * 100 : 100;
+  if (corePixels === 0 || inkPixels === 0) return false;
 
-  return (coverage > 20 && errorRate < 10);
+  const coverage = coveredPixels / corePixels;
+  const outsideRate = outsidePixels / inkPixels;
+
+  return coverage > 0.6 && outsideRate < 0.15;
 }
 
 function acceptTracingAnswer() {
