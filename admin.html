@@ -476,8 +476,12 @@
                 <input type="text" id="sentence" placeholder="例: あおいくるま">
             </div>
             <div class="form-group">
-                <label>3. なぞる文字 (1文字)</label>
-                <input type="text" id="traceChar" placeholder="例: い">
+                <label>3. なぞる文字①</label>
+                <input type="text" id="traceChar" placeholder="例: い" maxlength="1">
+            </div>
+            <div class="form-group" id="traceChar2-group" style="display:none">
+                <label>3b. なぞる文字② <span style="font-weight:400;color:#888">(省略可)</span></label>
+                <input type="text" id="traceChar2" placeholder="例: を" maxlength="1">
             </div>
             <div class="form-group">
                 <label>4. イラスト画像</label>
@@ -623,7 +627,7 @@ async function loadRecentQuestions() {
 
     list.innerHTML = recent.map(q => {
         const word  = q.parts ? q.parts.map(p => p.text).join('') : '?';
-        const trace = q.parts ? (q.parts.find(p => p.type === 'trace')?.text || '?') : '?';
+        const trace = q.parts ? q.parts.filter(p => p.type === 'trace').map(p => `「${p.text}」`).join('・') || '?' : '?';
         return `
         <div class="item-card">
             <img src="${q.image}" class="item-thumb" alt="">
@@ -646,14 +650,25 @@ async function loadRecentQuestions() {
     });
 }
 
+// カテゴリー変更 → 2文字目フィールドの表示切り替え
+document.getElementById('category').addEventListener('change', function() {
+    const show = this.value === '3';
+    document.getElementById('traceChar2-group').style.display = show ? '' : 'none';
+    if (!show) document.getElementById('traceChar2').value = '';
+});
+
 document.getElementById('uploadBtn').addEventListener('click', async () => {
-    const btn      = document.getElementById('uploadBtn');
-    const category = parseInt(document.getElementById('category').value);
-    const sentence = document.getElementById('sentence').value.trim();
-    const traceChar= document.getElementById('traceChar').value.trim();
-    const file     = document.getElementById('imageFile').files[0];
+    const btn       = document.getElementById('uploadBtn');
+    const category  = parseInt(document.getElementById('category').value);
+    const sentence  = document.getElementById('sentence').value.trim();
+    const traceChar = document.getElementById('traceChar').value.trim();
+    const traceChar2= document.getElementById('traceChar2').value.trim();
+    const file      = document.getElementById('imageFile').files[0];
 
     if (!sentence || !traceChar || !file) { alert("すべて入力してください！"); return; }
+
+    // なぞり文字のセット（空の2文字目は除外）
+    const traceSet = new Set([traceChar, ...(traceChar2 ? [traceChar2] : [])]);
 
     btn.disabled    = true;
     btn.textContent = "処理中…";
@@ -662,16 +677,17 @@ document.getElementById('uploadBtn').addEventListener('click', async () => {
     try {
         const base64 = await resizeImage(file);
         const parts  = sentence.split('').map(c =>
-            ({ type: c === traceChar ? 'trace' : 'select', text: c }));
+            ({ type: traceSet.has(c) ? 'trace' : 'select', text: c }));
 
         await addDoc(collection(db, "questions"), {
             category, image: base64, parts, createdAt: new Date()
         });
 
         showStatus('status-mondai', "✅ 保存しました！", "green");
-        document.getElementById('sentence').value  = '';
-        document.getElementById('traceChar').value = '';
-        document.getElementById('imageFile').value = '';
+        document.getElementById('sentence').value   = '';
+        document.getElementById('traceChar').value  = '';
+        document.getElementById('traceChar2').value = '';
+        document.getElementById('imageFile').value  = '';
         loadRecentQuestions();
     } catch(e) {
         showStatus('status-mondai', "❌ エラー: " + e.message, "red");
